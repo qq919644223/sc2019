@@ -14,6 +14,7 @@
     <select id="getUser" parameterType="java.lang.String" resultType="com.xzsd.app.userInformation.entity.UserInformation">
         select
           a.name userName,
+          a.image_url userImage,
           a.role role,
           b.store_code storeId,
           b.store_name storeName,

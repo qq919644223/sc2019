@@ -84,6 +84,7 @@ public class ClientOrderInfo {
      * 版本号
      */
     private String version;
+    public ClientOrderInfo(){};
     public ClientOrderInfo(String orderDetailCode, String orderId, String userId, String goodsId, String goodsPrice, int clientGoodsNum,String goodsTotalPrice,int stock) {
         this.orderDetailCode = orderDetailCode;
         this.orderId = orderId;

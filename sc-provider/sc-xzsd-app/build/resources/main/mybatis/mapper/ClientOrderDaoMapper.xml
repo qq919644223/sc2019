@@ -164,7 +164,7 @@
         left join t_goods_info b
         on a.goods_code = b.goods_code
         where
-          a.order_code =#{orderCode}
+          a.order_code = #{orderCode}
     </select>
 
 </mapper>

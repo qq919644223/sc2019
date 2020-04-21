@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.driver.dao.DriverDao">
+    <!--司机列表-->
+    <select id="listDriverByPage" parameterType="com.xzsd.pc.driver.entity.DriverInfo" resultType="com.xzsd.pc.driver.entity.DriverInfo">
+        select
+        b.driver_code driverId,
+        a.name driverName,
+        a.phone phone,
+        a.idcard idCard,
+        a.user_name userAccount,
+        b.version version
+        from
+          t_sys_user a, t_driver_info b
+        where
+          b.is_delete = 0
+        and
+          a.user_code = b.driver_code
+        <if test="role == 1">
+            and b.area_id = (select area_id areaId from t_store_info where user_code = #{userId})
+        </if>
+        <if test="driverId != null and driverId != ''">
+            and b.driver_code like concat('%', #{driverId}, '%')
+        </if>
+        <if test="driverName != null and driverName != ''">
+            and a.name like concat('%', #{driverName}, '%')
+        </if>
+        <if test="provinceId != null and provinceId != ''">
+            and b.province_id = #{provinceId}
+        </if>
+        <if test="cityId != null and cityId != ''">
+            and b.city_id = #{cityId}
+        </if>
+        <if test="areaId != null and areaId != ''">
+            and b.area_id = #{areaId}
+        </if>
+        order by b.create_time desc
+    </select>
+
+    <!--统计用户账号或手机号数量-->
+    <select id="count" parameterType="com.xzsd.pc.driver.entity.DriverInfo" resultType="int">
+        select count(user_code)
+        from t_sys_user
+        where is_delete = 0
+        and (user_name= #{userAccount} or phone = #{phone})
+        <if test="driverId != null and driverId != ''">
+            and user_code != #{driverId}
+        </if>
+    </select>
+
+    <!--新增用户-->
+    <insert id="addUser" parameterType="com.xzsd.pc.driver.entity.DriverInfo">
+        insert into t_sys_user
+        (
+         user_code,
+         user_name,
+         user_password,
+         name,
+         phone,
+         idcard,
+         role,
+         image_url,
+         is_delete,
+         create_user,
+         create_time,
+         update_user,
+         update_time,
+         version
+         )
+        values
+           (
+            #{driverId},
+            #{userAccount},
+            #{password},
+            #{driverName},
+            #{phone},
+            #{idCard},
+            2,
+            #{imageUrl},
+            #{isDeleted},
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            now(),
+            0)
+    </insert>
+
+    <!--新增司机-->
+    <insert id="addDriver" parameterType="com.xzsd.pc.driver.entity.DriverInfo">
+        insert into t_driver_info
+        (
+         driver_code,
+         province_id,
+         city_id,
+         area_id,
+         province_name,
+         city_name,
+         area_name,
+         is_delete,
+         create_user,
+         create_time,
+         update_user,
+         update_time,
+         version
+         )
+        values
+           (
+            #{driverId},
+            #{provinceId},
+            #{cityId},
+            #{areaId},
+            #{provinceName},
+            #{cityName},
+            #{areaName},
+            #{isDeleted},
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            now(),
+            0)
+    </insert>
+
+    <!--获取司机信息-->
+    <select id="findDriverById" parameterType="java.lang.String" resultType="com.xzsd.pc.driver.entity.DriverInfo">
+        select
+          b.driver_code driverId,
+          a.name driverName,
+          a.phone phone,
+          a.user_name userAccount,
+          a.user_password password,
+          a.idcard idCard,
+          a.image_url imageUrl,
+          b.province_name provinceName,
+          b.city_name cityName,
+          b.area_name areaName,
+          b.version version
+        from
+          t_sys_user a, t_driver_info b
+        where
+          b.driver_code = #{driverId}
+        and
+          b.driver_code = a.user_code
+        and
+          b.is_delete = 0
+    </select>
+
+    <!--修改用户信息-->
+    <update id="updateUserById" parameterType="com.xzsd.pc.driver.entity.DriverInfo">
+        update t_sys_user
+        set
+          name = #{driverName},
+          phone = #{phone},
+          user_name = #{userAccount},
+          user_password = #{password},
+          idcard = #{idCard},
+          image_url = #{imageUrl},
+          update_time  = now(),
+          update_user  = #{lastModifiedBy},
+          version      = version + 1
+        where
+          user_code = #{driverId}
+        and
+          version = #{version}
+    </update>
+
+    <!--修改司机信息-->
+    <update id="updateDriverById" parameterType="com.xzsd.pc.driver.entity.DriverInfo">
+        update t_driver_info
+        set
+          province_id = #{provinceId},
+          city_id = #{cityId},
+          area_id = #{areaId},
+          province_name = #{provinceName},
+          city_name = #{cityName},
+          area_name = #{areaName},
+          update_time  = now(),
+          update_user  = #{lastModifiedBy},
+          version      = version + 1
+        where
+          driver_code = #{driverId}
+        and
+          version = #{version}
+    </update>
+
+    <!--删除用户-->
+    <update id="deleteUser" parameterType="com.xzsd.pc.driver.entity.DriverInfo">
+        update t_sys_user
+        set
+        is_delete = 1,
+        update_time = now(),
+        update_user  = #{Id},
+        version = version + 1
+        where user_code in
+        <foreach item="item" index="index" collection="listCode" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--删除司机-->
+    <update id="deleteDriver" parameterType="com.xzsd.pc.driver.entity.DriverInfo">
+        update t_driver_info
+        set
+        is_delete = 1,
+        update_time = now(),
+        update_user  = #{Id},
+        version = version + 1
+        where driver_code in
+        <foreach item="item" index="index" collection="listCode" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--查询省市区下拉列表-->
+    <select id="listArea" parameterType="java.lang.String" resultType="com.xzsd.pc.store.entity.AreaInfo">
+        select
+          dict_value areaId,
+          dict_name areaName
+        from
+          t_dictionary
+        where
+          parent_code = #{cateId}
+    </select>
+
+</mapper>

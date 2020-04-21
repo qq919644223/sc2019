@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.rotationChart.dao.RotationChartDao">
+    <!--统计商品编号数量-->
+    <select id="countGoodsCode" parameterType="com.xzsd.pc.rotationChart.entity.RotationChartInfo" resultType="int">
+        select count(goods_code)
+        from t_rotation_chart
+        where is_delete = 0
+        and goods_code = #{goodsCode}
+        <if test="chartId != null and chartId != ''">
+            and banner_code != #{chartId}
+        </if>
+    </select>
+    <!--统计排序号数量-->
+    <select id="countSortId" parameterType="com.xzsd.pc.rotationChart.entity.RotationChartInfo" resultType="int">
+        select count(sort_code)
+        from t_rotation_chart
+        where is_delete = 0
+        and sort_code = #{sortId}
+        <if test="chartId != null and chartId != ''">
+            and banner_code != #{chartId}
+        </if>
+    </select>
+
+    <!--新增轮播图-->
+    <insert id="addCharts" parameterType="com.xzsd.pc.rotationChart.entity.RotationChartInfo">
+        insert into
+          t_rotation_chart
+        (
+          banner_code,
+          image_url,
+          sort_code,
+          start_time,
+          end_time,
+          goods_code,
+          is_delete,
+          create_user,
+          create_time,
+          update_user,
+          update_time,
+          version
+        )
+        values
+        (
+          #{chartId},
+          #{pictureUrl},
+          #{sortId},
+          #{startTime},
+          #{endTime},
+          #{goodsCode},
+          #{isDeleted},
+          #{createBy},
+          now(),
+          #{lastModifiedBy},
+          now(),
+          0
+        )
+    </insert>
+
+    <!--轮播图删除-->
+    <update id="deleteChart" parameterType="com.xzsd.pc.rotationChart.entity.RotationChartInfo">
+        update
+          t_rotation_chart
+        set
+          is_delete = 1,
+          update_time = now(),
+          update_user = #{userId},
+          version = version + 1
+        where
+          banner_code in
+        <foreach item="item" index="index" collection="listId" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--轮播图列表查询-->
+    <select id="listChartsByPage" parameterType="com.xzsd.pc.rotationChart.entity.RotationChartInfo" resultType="com.xzsd.pc.rotationChart.entity.RotationChartInfo">
+        select
+          a.banner_code chartId,
+          a.sort_code sortId,
+          a.image_url pictureUrl,
+          a.image_status pictureStatus,
+          a.start_time startTime,
+          a.end_time endTime,
+          a.version version
+        from
+          t_rotation_chart a
+        where a.is_delete = 0
+        <if test="pictureStatus != null and pictureStatus !=''">
+        and image_status = #{pictureStatus}
+        </if>
+        order by
+          a.sort_code desc
+    </select>
+
+    <!--修改轮播图状态-->
+    <update id="updatePictureStatus" parameterType="com.xzsd.pc.rotationChart.entity.RotationChartInfo">
+        update
+          t_rotation_chart
+        set
+          image_status = #{pictureStatus},
+          update_user = #{userId},
+          update_time = now(),
+          version = version + 1
+        where
+          banner_code in
+        <foreach item="item" index="index" collection="listId" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+    </update>
+
+    <!--商品列表查询-->
+    <select id="listSelectGoodsByPage" parameterType="com.xzsd.pc.rotationChart.entity.RotationChartInfo" resultType="com.xzsd.pc.rotationChart.entity.RotationChartInfo">
+        select
+        a.goods_code goodsCode,
+        a.goods_name goodsName,
+        b.cate_name firstCategoryName,
+        c.cate_name secondCategoryName,
+        a.goods_status goodsStatus
+        from
+          t_goods_info a
+        from t_goods_info a
+        left join t_goods_classification b
+        on a.first_classificationId = b.cate_code
+        left join t_goods_classification c
+        on a.second_classificationId = c.cate_code
+        and a.goods_status = 0
+        <if test="goodsName != null and goodsName != ''">
+            and a.goods_name like concat('%', #{goodsName}, '%')
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and a.goods_code like concat('%', #{goodsCode}, '%')
+        </if>
+        order by
+        a.create_time desc
+    </select>
+</mapper>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.user.dao.UserDao">
+
+    <!--统计用户账号或手机号数量-->
+    <select id="countUser" parameterType="com.xzsd.pc.user.entity.UserInfo" resultType="int">
+        select count(user_code)
+        from t_sys_user
+        where is_delete = 0
+        and (user_name = #{userAccount} or phone = #{phone})
+        <if test="userId != null and userId != ''">
+            and user_code != #{userId}
+        </if>
+    </select>
+
+    <!--新增用户-->
+    <insert id="addUser" parameterType="com.xzsd.pc.user.entity.UserInfo">
+        insert into t_sys_user
+        (
+         user_code,
+         user_name,
+         user_password,
+         name,
+         sex,
+         phone,
+         mail,
+         idcard,
+         role,
+         image_url,
+         is_delete,
+         create_user,
+         create_time,
+         update_user,
+         update_time,
+         version
+         )
+        values
+           (
+            #{userId},
+            #{userAccount},
+            #{password},
+            #{userName},
+            #{userSex},
+            #{phone},
+            #{email},
+            #{idCard},
+            #{role},
+            #{imageUrl},
+            #{isDeleted},
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            now(),
+            0)
+    </insert>
+
+    <!--删除用户-->
+    <update id="deleteUser" parameterType="com.xzsd.pc.user.entity.UserInfo">
+        update t_sys_user
+        set
+        is_delete = 1,
+        update_time = now(),
+        update_user  = #{Id},
+        version = version + 1
+        where user_code in
+        <foreach item="item" index="index" collection="listCode" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--修改用户信息-->
+    <update id="updateUserById" parameterType="com.xzsd.pc.user.entity.UserInfo">
+        update t_sys_user
+        set
+            user_name     = #{userAccount},
+            user_password = #{password},
+            name          = #{userName},
+            sex           = #{userSex},
+            phone         = #{phone},
+            mail          = #{email},
+            idcard        = #{idCard},
+            role          = #{role},
+            image_url     = #{imageUrl},
+            update_time   = now(),
+            update_user   = #{lastModifiedBy},
+            version      = version + 1
+        where user_code = #{userId}
+          and version = #{version}
+    </update>
+
+    <!--用户列表-->
+    <select id="listUsersByPage" parameterType="com.xzsd.pc.user.entity.UserInfo" resultType="com.xzsd.pc.user.entity.UserInfo">
+        select
+          a.user_name userAccount,
+          a.name userName,
+          a.role role,
+          a.sex userSex,
+          a.phone phone,
+          a.mail email,
+          a.idcard idCard,
+          a.user_password password,
+          a.user_code userId,
+          a.version version
+        from t_sys_user a
+        where a.is_delete = 0
+        <if test="userAccount != null and userAccount != ''">
+            and a.user_name like concat('%', #{userAccount}, '%')
+        </if>
+        <if test="userName != null and userName != ''">
+            and a.name like concat('%', #{userName}, '%')
+        </if>
+        <if test="role != null and role != ''">
+            and a.role = #{role}
+        </if>
+        order by create_time desc
+    </select>
+
+    <!--获取用户信息-->
+    <select id="findUserById" parameterType="java.lang.String" resultType="com.xzsd.pc.user.entity.UserInfo">
+        select
+            user_name userAccount,
+            user_password password,
+            role,
+            name userName,
+            idcard idCard,
+            sex userSex,
+            phone,
+            mail email,
+            user_code userId,
+            image_url imageUrl,
+            version
+        from t_sys_user
+        where user_code = #{userId}
+        and is_delete = 0
+    </select>
+
+</mapper>

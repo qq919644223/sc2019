@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.clientOrder.dao.ClientOrderDao">
+    <!--订单列表集合集合-->
+    <resultMap id="orderMap" type="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
+        <id column="order_code" property="orderId" jdbcType="VARCHAR" />
+        <result column="order_status" property="orderStateId" jdbcType="VARCHAR" />
+        <result column="order_price" property="orderAllCost" jdbcType="VARCHAR" />
+        <result column="goods_total_num" property="orderAllGoodsCount" jdbcType="VARCHAR" />
+        <result column="version" property="version" jdbcType="VARCHAR" />
+        <!--订单里全部种类商品基本信息集合-->
+        <collection property="goodsList" ofType="com.xzsd.app.clientOrder.entity.GoodsInfo" select="selectGoods" column="order_code">
+            <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+            <result column="image_url" property="goodsImagePath" jdbcType="VARCHAR"/>
+            <result column="detail" property="goodsDescribe" jdbcType="VARCHAR"/>
+            <result column="goods_price" property="goodsPrice" jdbcType="VARCHAR"/>
+            <result column="goods_cnt" property="cartGoodsCount" jdbcType="VARCHAR"/>
+            <result column="goods_code" property="goodsId" jdbcType="VARCHAR" />
+            <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+    <!--检验订单中的商品是否还有库存-->
+    <select id="countStock" resultType="int">
+        select
+        stock
+        from
+        t_goods_info
+        where
+        is_delete = 0
+        and
+        goods_code in
+        <foreach item="item" index="index" collection="listGoodsId" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--新增订单-->
+    <insert id="addOrder" parameterType="java.util.List">
+        insert into t_order_info
+        (
+         order_code,
+         order_price,
+         order_status,
+         store_code,
+         user_code,
+         receive_time,
+         goods_total_num,
+         is_delete,
+         create_user,
+         create_time,
+         update_user,
+         update_time,
+         version
+         )
+        values
+         (
+          #{orderId},
+          #{orderPrice},
+          0,
+          #{storeId},
+          #{userId},
+          now(),
+          #{totalCount},
+          0,
+          #{userId},
+          now(),
+          #{userId},
+          now(),
+          0)
+    </insert>
+
+    <!--新增订单到详情表-->
+    <insert id="addOrderDetail" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
+        insert into t_order_detail
+        (
+         order_detail_code,
+         order_code,
+         user_code,
+         goods_code,
+         goods_cnt,
+         unit_price,
+         goods_price,
+         is_delete,
+         create_user,
+         create_time,
+         update_user,
+         update_time,
+         version
+         )
+        values
+        <foreach item="item" collection="listOrder" separator="," >
+         (
+          #{item.orderDetailCode},
+          #{item.orderId},
+          #{item.gmtCreate},
+          #{item.goodsId},
+          #{item.clientGoodsNum},
+          #{item.goodsPrice},
+          #{item.goodsTotalPrice},
+          0,
+          #{item.gmtCreate},
+          now(),
+          #{item.gmtCreate},
+          now(),
+          0)
+          </foreach>
+    </insert>
+
+    <!--修改商品库存-->
+    <update id="updateGoodsStock" parameterType="java.util.List">
+        <foreach item="item" collection="listOrder" separator=";" >
+        update t_goods_info
+        set
+        stock = #{item.stock}-#{item.clientGoodsNum},
+        update_user = #{item.gmtCreate},
+        update_time = now(),
+        version = version + 1
+        where
+        goods_code = #{item.goodsId}
+        </foreach>
+    </update>
+
+    <!--删除购物车商品信息-->
+    <update id="deleteCartGoods" parameterType="java.util.List">
+        update t_shopping_cart
+        set
+        is_delete = 1,
+        update_time = now(),
+        update_user = #{userId},
+        version = version + 1
+        where goods_code in
+        <foreach item="item" index="index" collection="listGoodsId" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--查询订单列表-->
+    <select id="listOrderByPage" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo" resultMap="orderMap">
+        select
+          order_code,
+          order_status,
+          order_price,
+          goods_total_num,
+          version
+        from
+          t_order_info
+        <if test="orderStateId != null and orderStateId != ''">
+        where
+          a.order_status = #{orderStateId}
+        </if>
+    </select>
+
+    <!--查询订单里全部种类商品基本信息-->
+    <select id="selectGoods" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo" resultType="com.xzsd.app.clientOrder.entity.GoodsInfo">
+        select
+          b.goods_name,
+          b.image_url,
+          b.detail,
+          a.goods_price,
+          a.goods_cnt,
+          a.goods_code
+        from
+          t_order_detail a
+        left join t_goods_info b
+        on a.goods_code = b.goods_code
+        where
+          a.order_code =#{orderCode}
+    </select>
+
+</mapper>

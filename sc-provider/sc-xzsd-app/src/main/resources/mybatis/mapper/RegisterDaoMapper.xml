@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.register.dao.RegisterDao">
+    <!--统计用户账号或手机号数量-->
+    <select id="countUser" parameterType="com.xzsd.pc.user.entity.UserInfo" resultType="int">
+        select count(user_code)
+        from t_sys_user
+        where is_delete = 0
+        and (user_name = #{userAcct} or phone = #{phone} or idcard = #{idCard})
+        <if test="userId != null and userId != ''">
+            and user_code != #{userId}
+        </if>
+    </select>
+
+    <!--注册用户-->
+    <insert id="clientRegister" parameterType="com.xzsd.app.register.entity.RegisterInfo">
+        insert into t_sys_user
+        (
+         user_code,
+         user_name,
+         user_password,
+         name,
+         sex,
+         phone,
+         mail,
+         idcard,
+         invitation_code,
+         role,
+         is_delete,
+         create_user,
+         create_time,
+         update_user,
+         update_time,
+         version
+         )
+        values
+           (
+            #{userId},
+            #{userAcct},
+            #{userPassword},
+            #{userName},
+            #{sex},
+            #{phone},
+            #{mail},
+            #{idCard},
+            #{inviteCode},
+            3,
+            #{isDeleted},
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            now(),
+            0)
+    </insert>
+
+    <!--新增客户到客户表-->
+    <insert id="addCustomer" parameterType="com.xzsd.app.register.entity.RegisterInfo">
+        insert into t_customer_info
+        (
+         cust_code,
+         user_code,
+         invitation_code,
+         is_delete,
+         create_user,
+         create_time,
+         update_user,
+         update_time,
+         version
+         )
+        values
+           (
+            #{customerId},
+            #{userId},
+            #{inviteCode},
+            #{isDeleted},
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            now(),
+            0)
+    </insert>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.userInformation.dao.UserInformationDao"><!--获取当前登录人的角色编号-->
+    <select id="getUserRole" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+          role role
+        from
+          t_sys_user
+        where
+          user_code = #{userId}
+    </select>
+
+    <!--获取用户信息-->
+    <select id="getUser" parameterType="java.lang.String" resultType="com.xzsd.app.userInformation.entity.UserInformation">
+        select
+          a.name userName,
+          a.role role,
+          b.store_code storeId,
+          b.store_name storeName,
+          b.invitation_code inviteCode,
+          b.store_address address,
+          a.phone phone,
+          a.version version
+        from t_sys_user a
+        left join t_store_info b
+        on a.user_code = b.user_code
+        where a.user_code = #{userId}
+        and a.is_delete = 0
+    </select>
+
+    <!--获取用户信息-->
+    <select id="findUserById" parameterType="java.lang.String" resultType="com.xzsd.app.userInformation.entity.UserInformation">
+        select
+            user_password userPassword
+        from t_sys_user
+        where user_code = #{userId}
+        and is_delete = 0
+    </select>
+
+    <!--修改密码-->
+    <update id="updateUserPassword" parameterType="com.xzsd.app.userInformation.entity.UserInformation">
+        update t_sys_user
+           set user_password   = #{userNewPassword},
+               update_time = now(),
+               update_user   = #{lastModifiedBy},
+               version      = version + 1
+         where user_code = #{userId}
+    </update>
+</mapper>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.hotGoods.dao.HotGoodsDao">
+    <!--热门位商品列表-->
+    <select id="listHotGoodsByPage" parameterType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo" resultType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
+        select
+          a.sort_code sortId,
+          a.goods_code goodsCode,
+          b.goods_name goodsName,
+          b.selling_price sellingPrice,
+          b.detail goodsDetail,
+          a.version version,
+          a.id hotGoodsId
+        from t_hotgoods_info a, t_goods_info b
+        where
+          a.is_delete = 0
+        and
+          a.goods_code = b.goods_code
+        <if test="goodsName != null and goodsName != ''">
+            and b.goods_name like concat('%', #{goodsName}, '%')
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and a.goods_code like concat('%', #{goodsCode}, '%')
+        </if>
+        order by a.sort_code desc
+    </select>
+
+    <!--统计商品编号和排序号数量-->
+    <select id="countCode" parameterType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo" resultType="int">
+        select count(id)
+        from t_hotgoods_info
+        where is_delete = 0
+        and (goods_code = #{goodsCode} or sort_code = #{sortId})
+        <if test="hotGoodsId != null and hotGoodsId != ''">
+            and id != #{hotGoodsId}
+        </if>
+    </select>
+
+    <!--新增热门位商品-->
+    <insert id="addHotGoods" parameterType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
+        insert into t_hotgoods_info
+        (
+         id,
+         goods_code,
+         sort_code,
+         is_delete,
+         create_user,
+         create_time,
+         update_user,
+         update_time,
+         version
+         )
+        values
+           (
+            #{hotGoodsId},
+            #{goodsCode},
+            #{sortId},
+            #{isDeleted},
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            now(),
+            0)
+    </insert>
+    <!--修改商品信息-->
+    <update id="updateHotGoodsById" parameterType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
+       update t_hotgoods_info
+       set
+         sort_code = #{sortId},
+         goods_code = #{goodsCode},
+         update_user = #{lastModifiedBy},
+         update_time = now(),
+         version = version + 1
+       where
+         id = #{hotGoodsId}
+       and
+         version = #{version}
+    </update>
+
+    <!--删除热门位商品-->
+    <update id="deleteHotGoods" parameterType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
+        update t_hotgoods_info
+        set
+        is_delete = 1,
+        update_time = now(),
+        update_user = #{userId},
+        version = version + 1
+        where id in
+        <foreach item="item" index="index" collection="listCode" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--获取热门位商品信息-->
+    <select id="findhotGoodsById" parameterType="java.lang.String" resultType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
+       select
+         a.sort_code sortId,
+         a.goods_code goodsCode,
+         b.goods_name goodsName,
+         b.selling_price sellingPrice,
+         b.detail goodsDetail,
+         a.version version,
+         a.id hotGoodsId
+       from
+         t_hotgoods_info a, t_goods_info b
+       where
+         a.goods_code = b.goods_code
+       and
+         a.id = #{hotGoodsId}
+       and
+         a.is_delete = 0
+    </select>
+
+    <!--商品列表查询-->
+    <select id="listSelectGoodsByPage" parameterType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo" resultType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
+        select
+        a.goods_code goodsCode,
+        a.goods_name goodsName,
+        b.cate_name firstCategoryName,
+        c.cate_name secondCategoryName,
+        a.goods_status goodsStatus
+        from
+        t_goods_info a
+        from t_goods_info a
+        left join t_goods_classification b
+        on a.first_classificationId = b.cate_code
+        left join t_goods_classification c
+        on a.second_classificationId = c.cate_code
+        and a.goods_status = 0
+        <if test="goodsName != null and goodsName != ''">
+            and a.goods_name like concat('%', #{goodsName}, '%')
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and a.goods_code like concat('%', #{goodsCode}, '%')
+        </if>
+        order by
+        a.create_time desc
+    </select>
+
+    <!--查询热门位商品展示数量-->
+    <select id="findHotGoodsNum" resultType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
+        select
+          dict_value hotGoodsNum,
+          version version
+        from
+          t_dictionary
+        where
+          dict_name = '热门商品展示数量'
+    </select>
+
+    <!--修改热门位商品展示数量-->
+    <update id="updateHotGoodsNumber" parameterType="java.lang.String">
+        update
+          t_dictionary
+        set
+          dict_value = #{hotGoodsNum}
+          version = version + 1
+        where
+          dict_name = '热门商品展示数量'
+    </update>
+</mapper>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.store.dao.StoreDao">
+
+    <!--门店信息列表-->
+    <select id="listStoreByPage" parameterType="com.xzsd.pc.store.entity.StoreInfo" resultType="com.xzsd.pc.store.entity.StoreInfo">
+        select
+          a.store_code storeId,
+          a.store_name storeName,
+          b.phone phone,
+          a.store_address address,
+          b.name managerName,
+          a.invitation_code invitationCode,
+          b.user_name storeAccount,
+          a.version version
+        from t_store_info a, t_sys_user b
+        where
+        a.is_delete = 0
+        and
+        a.user_code = b.user_code
+        <if test="role == 1">
+            and  a.user_code = #{userId}
+        </if>
+        <if test="storeId != null and storeId != ''">
+            and a.store_code like concat('%', #{storeId}, '%')
+        </if>
+        <if test="storeName != null and storeName != ''">
+            and a.store_name like concat('%', #{storeName}, '%')
+        </if>
+        <if test="managerName != null and managerName != ''">
+            and b.name like concat('%', #{managerName}, '%')
+        </if>
+        <if test="provinceId != null and provinceId != ''">
+            and a.province_id = #{provinceId}
+        </if>
+        <if test="cityId != null and cityId != ''">
+            and a.city_id = #{cityId}
+        </if>
+        <if test="areaId != null and areaId != ''">
+            and a.area_id = #{areaId}
+        </if>
+        order by a.create_time desc
+    </select>
+
+    <!--统计营业执照或店长编号数量-->
+    <select id="countCode" parameterType="com.xzsd.pc.store.entity.StoreInfo" resultType="int">
+        select count(store_code)
+        from t_store_info
+        where is_delete = 0
+        and (invitation_code = #{invitationCode}
+          or license_code = #{licenseCode}
+          or user_code = #{userId})
+        <if test="storeId != null and storeId != ''">
+            and store_code != #{storeId}
+        </if>
+    </select>
+
+    <!--新增门店信息-->
+    <insert id="addStore" parameterType="com.xzsd.pc.store.entity.StoreInfo">
+        insert into t_store_info
+        (
+         store_code,
+         store_name,
+         user_code,
+         phone,
+         license_code,
+         invitation_code,
+         province_id,
+         city_id,
+         area_id,
+         store_address,
+         is_delete,
+         create_user,
+         create_time,
+         update_user,
+         update_time,
+         version
+         )
+        values
+        (
+          #{storeId},
+          #{storeName},
+          #{userId},
+          #{phone},
+          #{licenseCode},
+          #{invitationCode},
+          #{provinceId},
+          #{cityId},
+          #{areaId},
+          #{address},
+          #{isDeleted},
+          #{createBy},
+          now(),
+          #{lastModifiedBy},
+          now(),
+         0)
+    </insert>
+
+    <!--获取门店详情-->
+    <select id="findStoreById" parameterType="java.lang.String" resultType="com.xzsd.pc.store.entity.StoreInfo">
+        select distinct
+         a.store_code storeId,
+         a.store_name storeName,
+         a.phone phone,
+         a.store_address,
+         b.name managerName,
+         a.invitation_code invitationCode,
+         b.user_name storeAccount,
+         a.province_id provinceId,
+         a.city_id cityId,
+         a.area_id areaId,
+         c.dict_name provinceName,
+         d.dict_name cityName,
+         e.dict_name areaName,
+         a.license_code licenseCode,
+         a.version version
+       from
+         t_store_info a
+       left join t_sys_user b
+        on a.user_code = b.user_code
+       left join t_dictionary c
+        on a.province_id = c.dict_value
+       left join t_dictionary d
+        on a.city_id = d.dict_value
+       left join t_dictionary e
+        on a.area_id = e.dict_value
+       where
+         a.is_delete = 0
+       and
+         a.store_code = #{storeId}
+    </select>
+
+    <!--修改门店信息-->
+    <update id="updateStoreById" parameterType="com.xzsd.pc.store.entity.StoreInfo">
+        update t_store_info
+        set
+            store_name = #{storeName},
+            phone = #{phone},
+            province_id = #{provinceId},
+            city_id = #{cityId},
+            area_id = #{areaId},
+            user_code = #{userId},
+            license_code = #{licenseCode},
+            store_address = #{address},
+            update_time = now(),
+            update_user = #{lastModifiedBy},
+            version  = version + 1
+        where store_code = #{storeId}
+          and version = #{version}
+    </update>
+
+    <!--删除门店-->
+    <update id="deleteStore" parameterType="com.xzsd.pc.store.entity.StoreInfo">
+        update t_store_info
+        set
+        is_delete = 1,
+        update_time = now(),
+        update_user  = #{Id},
+        version = version + 1
+        where store_code in
+        <foreach item="item" index="index" collection="listCode" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--查询省市区下拉列表-->
+    <select id="listArea" parameterType="java.lang.String" resultType="com.xzsd.pc.store.entity.AreaInfo">
+        select
+          dict_value areaId,
+          dict_name areaName
+        from
+          t_dictionary
+        where
+          parent_code = #{cateId}
+    </select>
+
+</mapper>

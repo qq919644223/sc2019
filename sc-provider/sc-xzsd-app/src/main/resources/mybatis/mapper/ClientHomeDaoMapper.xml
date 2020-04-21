@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.clientHome.dao.ClientHomeDao">
+    <!--轮播图信息-->
+    <select id="listRotationCharHome" parameterType="com.xzsd.app.clientHome.entity.ClientHomeInfo" resultType="com.xzsd.app.clientHome.entity.ClientHomeInfo">
+        select
+          image_url slideshowPath,
+          goods_code goodsId
+        from
+          t_rotation_chart
+        where
+          is_delete = 0
+        and
+          image_status = 1
+        and
+          end_time &gt;= now()
+        and
+          start_time &lt;= now()
+        order by
+          sort_code desc
+    </select>
+
+    <!--热门商品信息-->
+    <select id="listHotGoods" parameterType="com.xzsd.app.clientHome.entity.ClientHomeInfo" resultType="com.xzsd.app.clientHome.entity.ClientHomeInfo">
+        select
+          a.goods_code goodsId,
+          b.goods_name goodsName,
+          b.image_url goodsImagePath,
+          b.selling_price goodsPrice
+        from
+          t_hotgoods_info a,t_goods_info b
+        where
+          a.is_delete = 0
+        and
+          a.goods_code = b.goods_code
+        order by
+          a.sort_code desc
+    </select>
+</mapper>

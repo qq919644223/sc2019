@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.customer.dao.CustomerDao">
+    <!--客户列表-->
+    <select id="listCustomersByPage" parameterType="com.xzsd.pc.customer.entity.CustomerInfo" resultType="com.xzsd.pc.customer.entity.CustomerInfo">
+        select
+        b.user_name customerAccount,
+        b.name customerName,
+        b.sex sex,
+        b.phone phone,
+        b.mail email,
+        b.idcard idCard,
+        a.invitation_code invitationCode
+        from t_customer_info a, t_sys_user b
+        where
+        a.is_delete = 0
+        and
+        a.user_code = b.user_code
+        <if test="customerName != null and customerName != ''">
+            and b.name like concat('%', #{customerName}, '%')
+        </if>
+        <if test="customerAccount != null and customerAccount != ''">
+            and b.user_name like concat('%', #{customerAccount}, '%')
+        </if>
+        <if test="role == 1">
+            and a.invitation_code = #{invitationCode}
+        </if>
+        order by b.create_time desc
+    </select>
+
+    <!--获取当前登录人的角色编号-->
+    <select id="getUserRole" parameterType="java.lang.String" resultType="int">
+        select
+          role role
+        from
+          t_sys_user
+        where
+          user_code = #{userId}
+    </select>
+
+    <!--通过用户编号找到邀请码-->
+    <select id="findCode" parameterType="java.lang.String" resultType="com.xzsd.pc.customer.entity.CustomerInfo">
+        select
+          invitation_code invitationCode
+        from
+          t_store_info
+        where
+          user_code = #{userId}
+    </select>
+
+</mapper>

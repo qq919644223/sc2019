@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.clientGoods.dao.ClientGoodsDao">
+    <!--商品评价信息集合-->
+    <resultMap id="GoodsEvaluatesMap" type="com.xzsd.app.clientGoods.entity.GoodsEvaluates">
+        <id column="evaluate_code" property="evaluateCode" jdbcType="VARCHAR" />
+        <result column="cust_code" property="custCode" jdbcType="VARCHAR" />
+        <result column="user_name" property="userAcct" jdbcType="VARCHAR" />
+        <result column="evaluate_info" property="evaluateContent" jdbcType="VARCHAR" />
+        <result column="evaluate_score" property="evaluateScore" jdbcType="VARCHAR"/>
+        <result column="goods_code" property="goodsId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="gmtCreate" jdbcType="VARCHAR"/>
+        <collection property="imageList" ofType="com.xzsd.app.clientGoods.entity.EvaluateImage" select="selectPicture" column="cust_code">
+            <id column="image_code" property="imageCode" jdbcType="VARCHAR" />
+            <result column="imagePath" property="imagePath" jdbcType="VARCHAR" />
+            <result column="user_code" property="userId" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <!--二级商品分类以及商品-->
+    <resultMap id="firstGoodsClassify" type="com.xzsd.app.clientGoods.entity.FirstGoodsClassify" >
+        <id column="cate_code" property="classifyId" jdbcType="VARCHAR" />
+        <result column="cate_name" property="classifyName" jdbcType="VARCHAR" />
+        <collection property="goodsList" ofType="com.xzsd.app.clientGoods.entity.SecondGoodsClassify">
+            <id column="goods_code" property="goodsId" jdbcType="VARCHAR" />
+            <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+            <result column="image_url" property="goodsImagePath" jdbcType="VARCHAR" />
+            <result column="selling_price" property="goodsPrice" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+    <!--获取商品信息-->
+    <select id="getGoods" parameterType="java.lang.String" resultType="com.xzsd.app.clientGoods.entity.ClientGoodsInfo">
+       select
+         goods_name goodsName,
+         book_no isbn,
+         detail goodsDescribe,
+         store_name storeName,
+         selling_price sellingPrice,
+         image_url goodsImagePath,
+         star_level goodsEvaluateScore,
+         press goodsPress,
+         writer goodsAuthor
+       from
+         t_goods_info
+       where
+         goods_code = #{goodsId}
+       and
+         is_delete = 0
+    </select>
+
+    <!--查询商品评价列表-->
+    <select id="listGoodsEvaluatesByPage" parameterType="com.xzsd.app.clientGoods.entity.GoodsEvaluates" resultMap="GoodsEvaluatesMap">
+        select
+          b.user_name,
+          a.evaluate_info,
+          a.evaluate_score,
+          a.create_time,
+          a.cust_code
+        from
+          t_goods_evaluate a,t_sys_user b
+        where
+          a.cust_code = b.user_code
+        and
+          a.goods_code = #{goodsId}
+        <if test="evaluateScore != null and evaluateScore != ''">
+            and a.evaluate_score = #{evaluateScore}
+        </if>
+    </select>
+    <select id="selectPicture" parameterType="com.xzsd.app.clientGoods.entity.GoodsEvaluates" resultType="com.xzsd.app.clientGoods.entity.EvaluateImage">
+        select
+          image_url imagePath
+        from
+          t_evaluate_picture
+        where
+          user_code = #{userId}
+    </select>
+
+    <!--查询一级商品分类列表-->
+    <select id="listOneGoodsClassify" parameterType="java.lang.String" resultType="com.xzsd.app.clientGoods.entity.FirstGoodsClassify">
+        select
+          cate_code classifyId,
+          cate_name classifyName
+        from
+          t_goods_classification
+        where
+          level = 1
+    </select>
+
+    <!--查询二级商品分类以及商品-->
+    <select id="listGetClassGoods" parameterType="java.lang.String" resultMap="firstGoodsClassify">
+        select
+          a.cate_code,
+          a.cate_name,
+          b.goods_code,
+          b.goods_name,
+          b.image_url,
+          b.selling_price
+        from
+          t_goods_classification a
+        left join
+          t_goods_info b
+        on
+          a.cate_code = b.second_classificationId
+        where
+          a.is_delete = 0
+        and
+          a.cate_code_parent = #{classifyId}
+        and
+          a.level = 2
+        order by
+          a.create_time desc
+    </select>
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.order.dao.OrderDao">
+    <!--订单列表-->
+    <select id="listOrdersByPage" parameterType="com.xzsd.pc.order.entity.OrderInfo" resultType="com.xzsd.pc.order.entity.OrderInfo">
+        select distinct
+        a.order_code orderCode,
+        a.order_price orderPrice,
+        a.order_status orderStatus,
+        a.store_code storeCode,
+        b.name orderPerName,
+        b.phone orderPerPhone,
+        a.receive_time receiptTime,
+        a.version version
+        from
+        t_order_info a
+        left join t_sys_user b
+        on a.user_code = b.user_code
+        where
+        a.is_delete = 0
+        <if test="orderPerName != null and orderPerName != ''">
+            and b.name like concat('%', #{orderPerName}, '%')
+        </if>
+        <if test="orderCode != null and orderCode != ''">
+            and a.order_code like concat('%', #{orderCode}, '%')
+        </if>
+        <if test="startPayTime != null and startPayTime != ''">
+            and a.receive_time &gt;= DATE_FORMAT(#{startPayTime},'%Y-%m-%d %h:%i:%S')
+        </if>
+        <if test="endPayTime != null and endPayTime != ''">
+            and a.receive_time &lt;= DATE_FORMAT(#{endPayTime},'%Y-%m-%d %h:%i:%S')
+        </if>
+        <if test="orderPerPhone != null and orderPerPhone != ''">
+            and b.phone like concat('%', #{orderPerPhone}, '%')
+        </if>
+        <if test="orderStatus != null and orderStatus != ''">
+            and a.order_status = #{orderStatus}
+        </if>
+        <if test="role == 1">
+            and a.store_code = #{storeCode}
+        </if>
+        order by a.create_time desc
+    </select>
+
+    <!--通过用户编号找到门店编号-->
+    <select id="findCode" parameterType="java.lang.String" resultType="com.xzsd.pc.order.entity.OrderInfo">
+        select
+          store_code storeCode
+        from
+          t_store_info
+        where
+          user_code = #{userId}
+    </select>
+    <!--获取订单信息-->
+    <select id="findOrderById" parameterType="java.lang.String" resultType="com.xzsd.pc.order.entity.OrderInfo">
+       select
+         a.user_code userId,
+         a.order_code orderCode,
+         a.goods_code goodsCode,
+         b.goods_name goodsName,
+         a.goods_cnt payNum,
+         a.goods_price orderPrice,
+         a.unit_price sellingPrice
+       from
+         t_order_detail a
+       left join t_goods_info b
+       on a.goods_code = b.goods_code
+       where
+         a.order_code = #{orderCode}
+       and
+         a.is_delete = 0
+    </select>
+
+    <!--修改商品状态-->
+    <update id="updateOrderStatus" parameterType="com.xzsd.pc.order.entity.OrderInfo">
+        update t_order_info
+        set
+        order_status = #{orderStatus},
+        update_user = #{userId},
+        update_time = now(),
+        version = version + 1
+        where order_code in
+        <foreach item="item" index="index" collection="listCode" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+</mapper>

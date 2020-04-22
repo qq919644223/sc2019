@@ -12,19 +12,25 @@
 
     <!--获取用户信息-->
     <select id="getUser" parameterType="java.lang.String" resultType="com.xzsd.app.userInformation.entity.UserInformation">
-        select
+         select
           a.name userName,
           a.image_url userImage,
           a.role role,
           b.store_code storeId,
           b.store_name storeName,
           b.invitation_code inviteCode,
-          b.store_address address,
+          CONCAT_WS('-',c.dict_name,d.dict_name,e.dict_name ) as address,
           a.phone phone,
           a.version version
         from t_sys_user a
         left join t_store_info b
         on a.user_code = b.user_code
+        left join t_dictionary c
+        on b.province_id = c.dict_value
+        left join t_dictionary d
+        on b.city_id = d.dict_value
+        left join t_dictionary e
+        on b.area_id = e.dict_value
         where a.user_code = #{userId}
         and a.is_delete = 0
     </select>

@@ -1,6 +1,7 @@
 package com.xzsd.app.clientOrder.dao;
 
 import com.xzsd.app.clientOrder.entity.ClientOrderInfo;
+import com.xzsd.app.clientOrder.entity.GoodsInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.security.access.method.P;
@@ -55,4 +56,25 @@ public interface ClientOrderDao {
      * @return 订单列表
      */
     List<ClientOrderInfo> listOrderByPage(ClientOrderInfo clientOrderInfo);
+
+    /**
+     * 修改订单状态
+     *  @param clientOrderInfo
+     * @return 修改结果
+     */
+    int updateOrderState(ClientOrderInfo clientOrderInfo);
+
+    /**
+     * 查询订单详情
+     * @param orderId 订单编号
+     * @return 查询结果
+     */
+    ClientOrderInfo listOrderDeepen(@Param("orderId") String orderId);
+
+    /**
+     * 查询订单评价商品信息列表
+     * @param orderId 订单编号
+     * @return 查询结果
+     */
+    List<GoodsInfo> listGoodsForEvaluate(@Param("orderId") String orderId);
 }

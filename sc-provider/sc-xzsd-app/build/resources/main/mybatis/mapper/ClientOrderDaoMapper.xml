@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xzsd.app.clientOrder.dao.ClientOrderDao">
-    <!--订单列表集合集合-->
+    <!--订单列表集合-->
     <resultMap id="orderMap" type="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
         <id column="order_code" property="orderId" jdbcType="VARCHAR" />
         <result column="order_status" property="orderStateId" jdbcType="VARCHAR" />
@@ -10,13 +10,34 @@
         <result column="version" property="version" jdbcType="VARCHAR" />
         <!--订单里全部种类商品基本信息集合-->
         <collection property="goodsList" ofType="com.xzsd.app.clientOrder.entity.GoodsInfo" select="selectGoods" column="order_code">
+            <id column="order_code" property="orderCode" jdbcType="VARCHAR" />
             <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
             <result column="image_url" property="goodsImagePath" jdbcType="VARCHAR"/>
             <result column="detail" property="goodsDescribe" jdbcType="VARCHAR"/>
             <result column="goods_price" property="goodsPrice" jdbcType="VARCHAR"/>
             <result column="goods_cnt" property="cartGoodsCount" jdbcType="VARCHAR"/>
             <result column="goods_code" property="goodsId" jdbcType="VARCHAR" />
-            <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+
+    <!--订单详情-->
+    <resultMap id="orderDetailMap" type="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
+        <id column="order_code" property="orderId" jdbcType="VARCHAR" />
+        <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+        <result column="store_address" property="address" jdbcType="VARCHAR" />
+        <result column="order_status" property="orderStateId" jdbcType="VARCHAR" />
+        <result column="order_price" property="orderAllCost" jdbcType="VARCHAR" />
+        <result column="goods_total_num" property="orderAllGoodsCount" jdbcType="VARCHAR" />
+        <result column="create_time" property="gmtCreate" jdbcType="VARCHAR" />
+        <!--该订单编号下的所有商品-->
+        <collection property="goodsList" ofType="com.xzsd.app.clientOrder.entity.GoodsInfo" select="selectDetailGoods" column="order_code">
+            <id column="order_code" property="orderCode" jdbcType="VARCHAR" />
+            <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+            <result column="image_url" property="goodsImagePath" jdbcType="VARCHAR"/>
+            <result column="detail" property="goodsDescribe" jdbcType="VARCHAR"/>
+            <result column="goods_price" property="goodsPrice" jdbcType="VARCHAR"/>
+            <result column="goods_cnt" property="cartGoodsCount" jdbcType="VARCHAR"/>
+            <result column="goods_code" property="goodsId" jdbcType="VARCHAR" />
         </collection>
     </resultMap>
     <!--检验订单中的商品是否还有库存-->
@@ -146,19 +167,20 @@
           t_order_info
         <if test="orderStateId != null and orderStateId != ''">
         where
-          a.order_status = #{orderStateId}
+          order_status = #{orderStateId}
         </if>
+        order by create_time desc
     </select>
 
     <!--查询订单里全部种类商品基本信息-->
     <select id="selectGoods" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo" resultType="com.xzsd.app.clientOrder.entity.GoodsInfo">
         select
           b.goods_name,
-          b.image_url,
-          b.detail,
-          a.goods_price,
-          a.goods_cnt,
-          a.goods_code
+          b.image_url goodsImagePath,
+          b.detail goodsDescribe,
+          a.goods_price goodsPrice,
+          a.goods_cnt cartGoodsCount,
+          a.goods_code goodsId
         from
           t_order_detail a
         left join t_goods_info b
@@ -167,4 +189,65 @@
           a.order_code = #{orderCode}
     </select>
 
+    <!--修改订单状态-->
+    <update id="updateOrderState" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
+        update t_order_info
+        set
+          order_status = #{orderStateId},
+          update_user = #{lastModifiedBy},
+          update_time = now(),
+          version = version + 1
+        where
+          order_code = #{orderId}
+        and
+          version = #{version}
+    </update>
+
+    <!--查询订单详情-->
+    <select id="listOrderDeepen" parameterType="java.lang.String" resultMap="orderDetailMap">
+        select
+          b.store_name,
+          b.store_address,
+          a.order_price,
+          a.goods_total_num,
+          a.order_code,
+          a.create_time,
+          a.order_status
+        from
+          t_order_info a
+        left join t_store_info b
+        on a.store_code = b.store_code
+        where
+          a.order_code = #{orderId}
+    </select>
+
+    <!--查询该订单下的所有商品-->
+    <select id="selectDetailGoods" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo" resultType="com.xzsd.app.clientOrder.entity.GoodsInfo">
+        select
+          b.goods_name,
+          b.image_url goodsImagePath,
+          b.detail goodsDescribe,
+          a.goods_price goodsPrice,
+          a.goods_cnt cartGoodsCount,
+          a.goods_code goodsId
+        from
+          t_order_detail a
+        left join t_goods_info b
+        on a.goods_code = b.goods_code
+        where
+          a.order_code = #{orderCode}
+    </select>
+
+    <!--查询订单评价商品信息列表-->
+    <select id="listGoodsForEvaluate" parameterType="java.lang.String" resultType="com.xzsd.app.clientOrder.entity.GoodsInfo">
+        select
+          a.goods_code goodsId,
+          b.image_url goodsImagePath
+        from
+          t_order_detail a
+        left join t_goods_info b
+        on a.goods_code = b.goods_code
+        where
+          a.order_code = #{orderId}
+    </select>
 </mapper>

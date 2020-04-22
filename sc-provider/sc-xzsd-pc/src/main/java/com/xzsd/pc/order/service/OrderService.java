@@ -46,7 +46,7 @@ public class OrderService {
     }
 
     /**
-     * findOrderById 查询商品详情
+     * findOrderById 查询订单详情
      * @param orderCode
      * @return AppResponse
      * @Author chenchaotao

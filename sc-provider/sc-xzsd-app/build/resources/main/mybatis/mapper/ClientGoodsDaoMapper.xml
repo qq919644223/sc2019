@@ -65,6 +65,7 @@
             and a.evaluate_score = #{evaluateScore}
         </if>
     </select>
+    <!--评价图片-->
     <select id="selectPicture" parameterType="com.xzsd.app.clientGoods.entity.GoodsEvaluates" resultType="com.xzsd.app.clientGoods.entity.EvaluateImage">
         select
           image_url imagePath
@@ -72,6 +73,7 @@
           t_evaluate_picture
         where
           user_code = #{userId}
+        order by image_num desc
     </select>
 
     <!--查询一级商品分类列表-->

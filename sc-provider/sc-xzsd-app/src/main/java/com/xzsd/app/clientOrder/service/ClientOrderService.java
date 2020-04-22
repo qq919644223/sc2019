@@ -3,9 +3,11 @@ package com.xzsd.app.clientOrder.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.neusoft.core.restful.AppResponse;
+import com.neusoft.security.client.utils.SecurityUtils;
 import com.neusoft.util.StringUtil;
 import com.xzsd.app.clientOrder.dao.ClientOrderDao;
 import com.xzsd.app.clientOrder.entity.ClientOrderInfo;
+import com.xzsd.app.clientOrder.entity.GoodsInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,5 +93,51 @@ public class ClientOrderService {
         //包装Page对象
         PageInfo<ClientOrderInfo> pageData = new PageInfo<ClientOrderInfo>(goodsEvaluatesList);
         return AppResponse.success("查询成功",pageData);
+    }
+
+    /**
+     * updateOrderState 修改订单状态
+     * @param clientOrderInfo
+     * @return AppResponse
+     * @Author chenchaotao
+     * @Date 2020-04-22
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse updateOrderState(ClientOrderInfo clientOrderInfo){
+        AppResponse appResponse = AppResponse.success("修改成功");
+        //获取用户id
+        String userId = SecurityUtils.getCurrentUserId();
+        clientOrderInfo.setLastModifiedBy(userId);
+        //修改订单状态
+        int count = clientOrderDao.updateOrderState(clientOrderInfo);
+        if (0 == count){
+            appResponse = AppResponse.versionError("数据无变化，请刷新！");
+            return appResponse;
+        }
+        return appResponse;
+    }
+
+    /**
+     * listOrderDeepen 查询订单详情
+     * @param orderId
+     * @return AppResponse
+     * @Author chenchaotao
+     * @Date 2020-04-22
+     */
+    public AppResponse listOrderDeepen(String orderId){
+        ClientOrderInfo clientOrderInfoList = clientOrderDao.listOrderDeepen(orderId);
+        return AppResponse.success("查询成功！",clientOrderInfoList);
+    }
+
+    /**
+     * listGoodsForEvaluate 查询订单评价商品信息列表
+     * @param orderId
+     * @return AppResponse
+     * @Author chenchaotao
+     * @Date 2020-04-22
+     */
+    public AppResponse listGoodsForEvaluate(String orderId){
+        List<GoodsInfo> listGoodsForEvaluate = clientOrderDao.listGoodsForEvaluate(orderId);
+        return AppResponse.success("查询成功！",listGoodsForEvaluate);
     }
 }

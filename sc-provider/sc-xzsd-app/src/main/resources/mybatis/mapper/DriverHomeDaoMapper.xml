@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.driverHome.dao.DriverHomeDao">
+    <!--查询当前登录店长所属的区-->
+    <select id="findAreaId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+          area_id
+        from
+          t_driver_info
+        where
+          driver_code = #{userId}
+    </select>
+
+    <!--查询司机负责的门店信息-->
+    <select id="listDriverStores" parameterType="java.lang.String" resultType="com.xzsd.app.driverHome.entity.DriverHomeInfo">
+        select distinct
+          a.store_code storeId,
+          a.store_name storeName,
+          CONCAT_WS('-',c.dict_name,d.dict_name,e.dict_name ) as address,
+          b.name userName,
+          b.phone phone
+        from
+          t_store_info a
+        left join t_sys_user b
+        on a.user_code = b.user_code
+        left join t_dictionary c
+        on a.province_id = c.dict_value
+        left join t_dictionary d
+        on a.city_id = d.dict_value
+        left join t_dictionary e
+        on a.area_id = e.dict_value
+        where
+          a.area_id = #{areaId}
+        and
+          a.is_delete = 0
+    </select>
+</mapper>

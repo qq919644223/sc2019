@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.clientInformation.dao.ClientInformationDao">
+   <!--校验门店邀请码是否存在-->
+    <select id="findCode" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+          invitation_code
+        from
+          t_store_info
+        where
+          invitation_code = #{inviteCode}
+    </select>
+
+    <!--修改邀请码-->
+    <update id="updateClientInvite" parameterType="java.lang.String">
+        update t_customer_info
+           set invitation_code = #{inviteCode},
+               update_time = now(),
+               update_user   = #{userId},
+               version      = version + 1
+         where user_code = #{userId}
+    </update>
+</mapper>

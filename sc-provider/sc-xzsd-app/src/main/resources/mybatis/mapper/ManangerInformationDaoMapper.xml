@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.manangerInformation.dao.ManangerInformationDao">
+    <!--查询当前登录店长所属的区-->
+    <select id="findAreaId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+          area_id
+        from
+          t_store_info
+        where
+          user_code = #{userId}
+    </select>
+
+    <!--查询店长门下的司机信息-->
+    <select id="listManangerDrivers" parameterType="java.lang.String" resultType="com.xzsd.app.manangerInformation.entity.ManangerInformation">
+        select
+          b.name userName,
+          b.phone phone
+        from
+          t_driver_info a
+        left join t_sys_user b
+        on a.driver_code = b.user_code
+        where
+          a.area_id = #{areaId}
+    </select>
+</mapper>

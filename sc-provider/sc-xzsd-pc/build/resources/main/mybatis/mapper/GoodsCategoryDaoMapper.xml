@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xzsd.pc.goodsCategory.dao.GoodsCategoryDao">
-
     <resultMap id="firstCategory" type="com.xzsd.pc.goodsCategory.entity.GoodsCategory" >
         <id column="cate_code" property="cateId" jdbcType="VARCHAR" />
         <result column="cate_name" property="cateName" jdbcType="VARCHAR" />
         <result column="cate_code_parent" property="parentCode" jdbcType="VARCHAR" />
-        <result column="level" property="level" jdbcType="INTEGER" />
         <result column="remark" property="cateRemark" jdbcType="VARCHAR" />
-        <collection property="goodsSecondCategoryList" ofType="com.xzsd.pc.goodsCategory.entity.GoodsSecondCategory">
+        <collection property="goodsSecondCategoryList" ofType="com.xzsd.pc.goodsCategory.entity.GoodsSecondCategory" column="cate_code" select="selectSecond">
             <id column="secondCateId" property="secondCateId" jdbcType="VARCHAR" />
             <result column="secondCateName" property="secondCateName" jdbcType="VARCHAR" />
             <result column="cate_code_parent" property="parentCode" jdbcType="VARCHAR" />
-            <result column="level" property="level" jdbcType="INTEGER" />
             <result column="remark" property="cateRemark" jdbcType="VARCHAR" />
         </collection>
     </resultMap>
 
     <!--查询全部分类列表-->
     <select id="listCategory" resultMap="firstCategory">
-        select
-          a.cate_code,
-          a.cate_name,
-          b.cate_code secondCateId,
-          b.cate_name secondCateName
+       select
+          cate_code,
+          cate_name
         from
-          t_goods_classification a
-        left join
-          t_goods_classification b
-        on
-          a.cate_code = b.cate_code_parent
+          t_goods_classification
         where
-          a.is_delete = 0
+          is_delete = 0
         and
-          a.level = 1
+          cate_code_parent = 0
+    </select>
+    <select id="selectSecond" parameterType="com.xzsd.pc.goodsCategory.entity.GoodsCategory" resultType="com.xzsd.pc.goodsCategory.entity.GoodsSecondCategory">
+       select
+          cate_code secondCateId,
+          cate_name secondCateName
+        from
+          t_goods_classification
+        where
+          is_delete = 0
+        and
+          cate_code_parent = #{secondCateId}
     </select>
 
     <!--统计分类名称数量-->
@@ -59,7 +61,6 @@
           cate_name,
           remark,
           cate_code_parent,
-          level,
           is_delete,
           create_user,
           create_time,
@@ -73,7 +74,6 @@
           #{cateName},
           #{cateRemark},
           #{parentCode},
-          #{level},
           #{isDeleted},
           #{createBy},
           now(),
@@ -101,6 +101,7 @@
     <!--商品分类详情查询-->
     <select id="findGoodsCategoryById" parameterType="java.lang.String" resultType="com.xzsd.pc.goodsCategory.entity.GoodsCategory">
         select
+          cate_code cateId,
           cate_name cateName,
           remark cateRemark,
           version

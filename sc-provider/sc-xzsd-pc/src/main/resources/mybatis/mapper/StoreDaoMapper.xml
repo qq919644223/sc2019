@@ -5,19 +5,20 @@
     <!--门店信息列表-->
     <select id="listStoreByPage" parameterType="com.xzsd.pc.store.entity.StoreInfo" resultType="com.xzsd.pc.store.entity.StoreInfo">
         select
-          a.store_code storeId,
-          a.store_name storeName,
-          b.phone phone,
-          a.store_address address,
-          b.name managerName,
-          a.invitation_code invitationCode,
-          b.user_name storeAccount,
-          a.version version
-        from t_store_info a, t_sys_user b
+        a.store_code storeId,
+        a.store_name storeName,
+        b.phone phone,
+        a.store_address address,
+        b.name managerName,
+        a.invitation_code invitationCode,
+        b.user_name storeAccount,
+        a.version version
+        from t_store_info a
+        left join
+        t_sys_user b
+        on a.user_code = b.user_code
         where
         a.is_delete = 0
-        and
-        a.user_code = b.user_code
         <if test="role == 1">
             and  a.user_code = #{userId}
         </if>

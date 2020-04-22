@@ -61,4 +61,57 @@ public class ClientOrderController {
         }
     }
 
+    /**
+     * updateOrderState 修改订单状态
+     * @param clientOrderInfo
+     * @return AppResponse
+     * @author chenchaotao
+     * @Date 2020-04-22
+     */
+    @PostMapping("updateOrderState")
+    public AppResponse updateOrderState(ClientOrderInfo clientOrderInfo){
+        try{
+            return clientOrderService.updateOrderState(clientOrderInfo);
+        }catch (Exception e){
+            logger.error("修改订单状态错误",e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
+
+    /**
+     * listOrderDeepen 查询订单详情
+     * @param orderId
+     * @return AppResponse
+     * @author chenchaotao
+     * @Date 2020-04-22
+     */
+    @RequestMapping(value = "listOrderDeepen")
+    public AppResponse listOrderDeepen(String orderId){
+        try{
+            return clientOrderService.listOrderDeepen(orderId);
+        }catch (Exception e){
+            logger.error("订单查询错误",e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
+
+    /**
+     * listGoodsForEvaluate 查询订单评价商品信息列表
+     * @param orderId
+     * @return AppResponse
+     * @author chenchaotao
+     * @Date 2020-04-22
+     */
+    @RequestMapping(value = "listGoodsForEvaluate")
+    public AppResponse listGoodsForEvaluate(String orderId){
+        try{
+            return clientOrderService.listGoodsForEvaluate(orderId);
+        }catch (Exception e){
+            logger.error("订单评价商品信息查询错误",e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
 }

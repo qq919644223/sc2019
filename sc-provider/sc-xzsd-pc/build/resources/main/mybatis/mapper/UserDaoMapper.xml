@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xzsd.pc.user.dao.UserDao">
-
     <!--统计用户账号或手机号数量-->
     <select id="countUser" parameterType="com.xzsd.pc.user.entity.UserInfo" resultType="int">
         select count(user_code)
@@ -91,6 +90,7 @@
     <!--用户列表-->
     <select id="listUsersByPage" parameterType="com.xzsd.pc.user.entity.UserInfo" resultType="com.xzsd.pc.user.entity.UserInfo">
         select
+          a.user_code userId,
           a.user_name userAccount,
           a.name userName,
           a.role role,

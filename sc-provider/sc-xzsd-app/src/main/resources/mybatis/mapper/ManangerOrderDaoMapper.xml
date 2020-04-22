@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.manangerOrder.dao.ManangerOrderDao">
+    <!--店长订单列表集合-->
+    <resultMap id="orderMap" type="com.xzsd.app.manangerOrder.entity.ManangerOrderInfo">
+        <id column="order_code" property="orderId" jdbcType="VARCHAR" />
+        <result column="order_status" property="orderStateId" jdbcType="VARCHAR" />
+        <result column="user_code" property="userId" jdbcType="VARCHAR" />
+        <result column="name" property="userName" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="order_price" property="orderAllCost" jdbcType="VARCHAR" />
+        <result column="goods_total_num" property="orderAllGoodsCount" jdbcType="VARCHAR" />
+        <result column="version" property="version" jdbcType="VARCHAR" />
+        <!--订单里全部种类商品基本信息集合-->
+        <collection property="goodsList" ofType="com.xzsd.app.manangerOrder.entity.GoodsInfo" select="selectGoods" column="order_code">
+            <id column="order_code" property="orderCode" jdbcType="VARCHAR" />
+            <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+            <result column="image_url" property="goodsImagePath" jdbcType="VARCHAR"/>
+            <result column="detail" property="goodsDescribe" jdbcType="VARCHAR"/>
+            <result column="goods_price" property="goodsPrice" jdbcType="VARCHAR"/>
+            <result column="goods_cnt" property="cartGoodsCount" jdbcType="VARCHAR"/>
+            <result column="goods_code" property="goodsId" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+    <select id="findCode" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+          store_code
+        from
+          t_store_info
+        where
+          user_code = #{userId}
+    </select>
+    <!--店长订单列表-->
+    <select id="listManagerOrdersByPage" parameterType="com.xzsd.app.manangerOrder.entity.ManangerOrderInfo" resultMap="orderMap">
+        select
+          a.order_code,
+          a.order_status,
+          a.user_code,
+          b.name,
+          b.phone,
+          a.order_price,
+          a.goods_total_num,
+          a.version
+        from
+          t_order_info a
+        left join t_sys_user b
+        on a.user_code = b.user_code
+        where
+          a.store_code = #{storeId}
+        <if test="orderStateId != null and orderStateId != ''">
+         and
+          a.order_status = #{orderStateId}
+        </if>
+        order by
+          a.create_time desc
+    </select>
+
+    <!--查询订单里全部种类商品基本信息-->
+    <select id="selectGoods" parameterType="com.xzsd.app.manangerOrder.entity.ManangerOrderInfo" resultType="com.xzsd.app.manangerOrder.entity.GoodsInfo">
+        select
+          b.goods_name,
+          b.image_url goodsImagePath,
+          b.detail goodsDescribe,
+          a.goods_price goodsPrice,
+          a.goods_cnt cartGoodsCount,
+          a.goods_code goodsId
+        from
+          t_order_detail a
+        left join t_goods_info b
+        on a.goods_code = b.goods_code
+        where
+          a.order_code = #{orderCode}
+        order by
+          a.create_time desc
+    </select>
+
+    <!--修改订单状态-->
+    <update id="updateManangerOrderState" parameterType="com.xzsd.app.manangerOrder.entity.ManangerOrderInfo">
+        update t_order_info
+        set
+          order_status = #{orderStateId},
+          update_user = #{lastModifiedBy},
+          update_time = now(),
+          version = version + 1
+        where
+          order_code = #{orderId}
+        and
+          version = #{version}
+    </update>
+</mapper>

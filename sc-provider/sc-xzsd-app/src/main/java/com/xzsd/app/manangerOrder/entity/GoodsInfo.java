@@ -1,4 +1,4 @@
-package com.xzsd.app.clientOrder.entity;
+package com.xzsd.app.manangerOrder.entity;
 
 public class GoodsInfo {
     /**

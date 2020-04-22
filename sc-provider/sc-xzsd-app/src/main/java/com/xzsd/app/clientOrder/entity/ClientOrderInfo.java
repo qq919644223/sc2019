@@ -49,6 +49,10 @@ public class ClientOrderInfo {
      */
     private int stock;
     /**
+     * 门店名称
+     */
+    private String storeName;
+    /**
      * 作废标记 0为存在，1为作废
      */
     private int isDeleted;
@@ -80,6 +84,10 @@ public class ClientOrderInfo {
      * 订单总商品数量
      */
     private String orderAllGoodsCount;
+    /**
+     * 详细地址
+     */
+    private String address;
     /**
      * 版本号
      */
@@ -183,6 +191,14 @@ public class ClientOrderInfo {
         this.stock = stock;
     }
 
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
     public int getIsDeleted() {
         return isDeleted;
     }
@@ -245,6 +261,14 @@ public class ClientOrderInfo {
 
     public void setOrderAllGoodsCount(String orderAllGoodsCount) {
         this.orderAllGoodsCount = orderAllGoodsCount;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getVersion() {

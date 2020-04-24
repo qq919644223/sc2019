@@ -29,5 +29,5 @@ public interface CustomerDao {
      * @param userId
      * @return 邀请码信息
      */
-    CustomerInfo findCode(@Param("userId") String userId);
+    String findCode(@Param("userId") String userId);
 }

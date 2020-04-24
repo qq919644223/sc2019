@@ -39,9 +39,9 @@
     </select>
 
     <!--通过用户编号找到邀请码-->
-    <select id="findCode" parameterType="java.lang.String" resultType="com.xzsd.pc.customer.entity.CustomerInfo">
+    <select id="findCode" parameterType="java.lang.String" resultType="java.lang.String">
         select
-          invitation_code invitationCode
+          invitation_code
         from
           t_store_info
         where

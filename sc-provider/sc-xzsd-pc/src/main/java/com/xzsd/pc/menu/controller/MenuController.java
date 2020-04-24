@@ -51,7 +51,7 @@ public class MenuController {
     @RequestMapping(value = "listMenuHome")
     public AppResponse listMenuHome(){
         try{
-            return menuService.listMenus();
+            return menuService.listMenuHome();
         }catch (Exception e){
             logger.error("查询菜单列表异常",e);
             System.out.println(e.toString());

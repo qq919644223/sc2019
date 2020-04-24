@@ -99,4 +99,18 @@ public interface ClientOrderDao {
      * 评价完将订单状态改为已完成已评价
      */
     int updateStatus(@Param("orderId")String orderId,@Param("userId")String userId);
+
+    /**
+     * 计算评价后的商品星级
+     * @param goodsEvaluateList
+     * @return
+     */
+    List<Double> countScore(@Param("goodsEvaluateList") List<GoodsEvaluate> goodsEvaluateList);
+
+    /**
+     * 评价后更新商品评价星级
+     * @param goodsEvaluateList
+     * @return
+     */
+    int updateScore(@Param("goodsEvaluateList") List<GoodsEvaluate> goodsEvaluateList);
 }

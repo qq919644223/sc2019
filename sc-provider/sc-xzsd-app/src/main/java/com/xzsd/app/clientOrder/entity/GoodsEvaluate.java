@@ -21,7 +21,10 @@ public class GoodsEvaluate {
      * 评价编号
      */
     private String evaluateCode;
-
+    /**
+     * 商品评价等级
+     */
+    private double goodsEvaluateScore;
     public String getUserId() {
         return userId;
     }
@@ -60,5 +63,13 @@ public class GoodsEvaluate {
 
     public void setEvaluateCode(String evaluateCode) {
         this.evaluateCode = evaluateCode;
+    }
+
+    public double getGoodsEvaluateScore() {
+        return goodsEvaluateScore;
+    }
+
+    public void setGoodsEvaluateScore(double goodsEvaluateScore) {
+        this.goodsEvaluateScore = goodsEvaluateScore;
     }
 }

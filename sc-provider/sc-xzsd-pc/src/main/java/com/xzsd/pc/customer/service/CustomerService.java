@@ -37,8 +37,11 @@ public class CustomerService {
         customerInfo.setRole(role);
         //如果是店长登录，则通过邀请码查询自己门店下的客户
         if (customerInfo.getRole() == 1) {
-            CustomerInfo intitationCode = customerDao.findCode(userId);
-            customerInfo.setInvitationCode(intitationCode.getInvitationCode());
+            String invitationCode = customerDao.findCode(userId);
+            if ("".equals(invitationCode)){
+                return AppResponse.bizError("还未有邀请码，请先新增门店信息");
+            }
+            customerInfo.setInvitationCode(invitationCode);
         }
         PageHelper.startPage(customerInfo.getPageNum(), customerInfo.getPageSize());
         List<CustomerInfo> customersInfoList = customerDao.listCustomersByPage(customerInfo);

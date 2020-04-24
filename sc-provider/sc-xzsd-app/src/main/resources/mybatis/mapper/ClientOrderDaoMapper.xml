@@ -306,4 +306,29 @@
         where
           order_code = #{orderId}
     </update>
+
+    <!--计算评价后的商品星级-->
+    <select id="countScore" parameterType="java.util.List" resultType="java.lang.Double">
+        <foreach item="item" collection="goodsEvaluateList" separator="," >
+        select avg(evaluate_score)
+        from
+        t_goods_evaluate
+        where
+        goods_code = #{item.goodsId}
+        </foreach>
+    </select>
+
+    <!--更新商品评价星级-->
+    <update id="updateScore" parameterType="java.lang.Double">
+        <foreach item="item" collection="goodsEvaluateList" separator=",">
+        update t_goods_info
+        set
+        star_level = #{item.goodsEvaluateScore},
+        update_time = now(),
+        update_user  = #{item.userId},
+        version = version + 1
+        where
+        goods_code = #{item.goodsId}
+        </foreach>
+    </update>
 </mapper>

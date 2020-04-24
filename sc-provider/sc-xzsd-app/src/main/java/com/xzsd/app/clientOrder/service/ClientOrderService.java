@@ -164,7 +164,15 @@ public class ClientOrderService {
         int count = clientOrderDao.addGoodsEvaluate(goodsEvaluateList,userId,orderId);
         // 评价完更新订单状态为已完成已评价
         int countEvaluate = clientOrderDao.updateStatus(orderId,userId);
-        if(0 == count || 0 == countEvaluate) {
+        // 计算评价后的商品星级
+        List<Double> evaluateScoreList = clientOrderDao.countScore(goodsEvaluateList);
+        for (int i = 0; i < evaluateScoreList.size(); i++) {
+            goodsEvaluateList.get(i).setGoodsEvaluateScore(new BigDecimal(evaluateScoreList.get(i)).setScale(1,BigDecimal.ROUND_HALF_UP).doubleValue());
+            goodsEvaluateList.get(i).setUserId(userId);
+        }
+        // 更新商品评价星级
+        int countGoodsScore = clientOrderDao.updateScore(goodsEvaluateList);
+        if(0 == count || 0 == countEvaluate || 0 == countGoodsScore) {
             return AppResponse.bizError("新增失败，请重试！");
         }
         return AppResponse.success("新增成功！");

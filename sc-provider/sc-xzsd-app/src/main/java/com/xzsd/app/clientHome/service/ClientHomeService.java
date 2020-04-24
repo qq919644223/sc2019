@@ -32,7 +32,7 @@ public class ClientHomeService {
     }
 
     /**
-     * listHotGoods 查询热门商品（分页）
+     * listHotGoods 查询热门商品
      * @param clientHomeInfo
      * @return AppResponse
      * @Author chenchaotao

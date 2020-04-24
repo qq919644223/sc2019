@@ -285,4 +285,16 @@
             0)
         </foreach>
     </insert>
+
+    <!--评价完修改订单状态为已完成已评价-->
+    <update id="updateStatus" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
+        update t_order_info
+        set
+          order_status = 5,
+          update_user = #{userId},
+          update_time = now(),
+          version = version + 1
+        where
+          order_code = #{orderId}
+    </update>
 </mapper>

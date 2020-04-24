@@ -86,4 +86,9 @@ public interface ClientOrderDao {
      * @return
      */
     int addGoodsEvaluate(@Param("goodsEvaluateList") List<GoodsEvaluate> goodsEvaluateList,@Param("userId") String userId,@Param("orderId") String orderId);
+
+    /**
+     * 评价完将订单状态改为已完成已评价
+     */
+    int updateStatus(@Param("orderId")String orderId,@Param("userId")String userId);
 }

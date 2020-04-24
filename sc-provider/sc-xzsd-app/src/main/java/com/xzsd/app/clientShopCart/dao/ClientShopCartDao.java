@@ -16,6 +16,13 @@ public interface ClientShopCartDao {
     int countGoodsId(ClientShopCartInfo clientShopCartInfo);
 
     /**
+     * 检验所选商品的库存
+     * @param clientShopCartInfo
+     * @return
+     */
+    int findStock(ClientShopCartInfo clientShopCartInfo);
+
+    /**
      * 新增购物车
      * @param clientShopCartInfo 购物车信息
      * @return

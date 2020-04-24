@@ -32,6 +32,11 @@ public class ClientShopCartService {
      */
     @Transactional(rollbackFor = Exception.class)
     public AppResponse addShoppingCart(ClientShopCartInfo clientShopCartInfo) {
+        // 检验商品是否还有库存
+        int countStock = clientShopCartDao.findStock(clientShopCartInfo);
+        if (countStock < clientShopCartInfo.getCartGoodsCount()){
+            return AppResponse.bizError("商品库存不够，添加购物车失败");
+        }
         // 校验商品编号是否存在
         int countGoodsId = clientShopCartDao.countGoodsId(clientShopCartInfo);
         if(0 != countGoodsId) {

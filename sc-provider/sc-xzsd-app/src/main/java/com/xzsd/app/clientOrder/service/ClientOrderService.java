@@ -153,11 +153,13 @@ public class ClientOrderService {
      */
     @Transactional(rollbackFor = Exception.class)
     public AppResponse addGoodsEvaluate(List<GoodsEvaluate> goodsEvaluateList,String orderId) {
-        //获取当前登录人id
+        // 获取当前登录人id
         String userId = SecurityUtils.getCurrentUserId();
         // 评价新增
         int count = clientOrderDao.addGoodsEvaluate(goodsEvaluateList,userId,orderId);
-        if(0 == count) {
+        // 评价完更新订单状态为已完成已评价
+        int countEvaluate = clientOrderDao.updateStatus(orderId,userId);
+        if(0 == count || 0 == countEvaluate) {
             return AppResponse.bizError("新增失败，请重试！");
         }
         return AppResponse.success("新增成功！");

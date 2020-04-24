@@ -42,8 +42,12 @@ public class UserService {
         }
         //密码加密
         if (userInfo.getPassword() != null) {
-            String pwd = PasswordUtils.generatePassword(userInfo.getPassword());
-            userInfo.setPassword(pwd);
+            //查出数据库里原加密密码，如果不修改密码，密码无需再加加密
+            String password = userDao.findPwd(userInfo);
+            if (!userInfo.getPassword().equals(password)){
+                String pwd = PasswordUtils.generatePassword(userInfo.getPassword());
+                userInfo.setPassword(pwd);
+            }
         }
         userInfo.setUserId(StringUtil.getCommonCode(2));
         userInfo.setIsDeleted(0);
@@ -92,8 +96,11 @@ public class UserService {
         }
         //将新密码加密
         if(userInfo.getPassword() != null){
-            String pwd = PasswordUtils.generatePassword(userInfo.getPassword());
-            userInfo.setPassword(pwd);
+            String password = userDao.findPwd(userInfo);
+            if (!userInfo.getPassword().equals(password)) {
+                String pwd = PasswordUtils.generatePassword(userInfo.getPassword());
+                userInfo.setPassword(pwd);
+            }
         }
         // 修改用户信息
         int count = userDao.updateUserById(userInfo);

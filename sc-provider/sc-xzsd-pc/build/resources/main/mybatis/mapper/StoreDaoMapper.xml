@@ -100,10 +100,11 @@
     <!--获取门店详情-->
     <select id="findStoreById" parameterType="java.lang.String" resultType="com.xzsd.pc.store.entity.StoreInfo">
         select distinct
+         b.user_code userId,
          a.store_code storeId,
          a.store_name storeName,
          a.phone phone,
-         a.store_address,
+         a.store_address address,
          b.name managerName,
          a.invitation_code invitationCode,
          b.user_name storeAccount,

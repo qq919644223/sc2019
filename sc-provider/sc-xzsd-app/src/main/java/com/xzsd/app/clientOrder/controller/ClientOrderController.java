@@ -1,16 +1,25 @@
 package com.xzsd.app.clientOrder.controller;
 
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.neusoft.core.restful.AppResponse;
 import com.neusoft.security.client.utils.SecurityUtils;
+import com.neusoft.util.StringUtil;
 import com.xzsd.app.clientOrder.entity.ClientOrderInfo;
+import com.xzsd.app.clientOrder.entity.GoodsEvaluate;
+import com.xzsd.app.clientOrder.entity.OrderEvaluate;
 import com.xzsd.app.clientOrder.service.ClientOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Description 订单管理
@@ -110,6 +119,37 @@ public class ClientOrderController {
             return clientOrderService.listGoodsForEvaluate(orderId);
         }catch (Exception e){
             logger.error("订单评价商品信息查询错误",e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
+
+    /**
+     * addGoodsEvaluate 新增订单商品评价
+     * @param order
+     * @return AppResponse
+     * @author chenchaotao
+     * @Date 2020-04-23
+     */
+    @PostMapping("addGoodsEvaluate")
+    public AppResponse addGoodsEvaluate(@RequestBody JSONObject order) {
+        try {
+            JSONObject orderEvaluateJson = order.getJSONObject("orderEvaluate");
+            OrderEvaluate orderEvaluate = (OrderEvaluate) JSONObject.toJavaObject(orderEvaluateJson,OrderEvaluate.class);
+            String orderId = orderEvaluate.getOrderId();
+            JSONArray goodsEvaluateJson = orderEvaluateJson.getJSONArray("evaluateList");
+            List<GoodsEvaluate> goodsEvaluateList = new ArrayList<GoodsEvaluate>();
+            for (int i = 0; i < goodsEvaluateJson.size(); i++) {
+                String evaluateCode = StringUtil.getCommonCode(2);
+                JSONObject goodsJson = (JSONObject) goodsEvaluateJson.getJSONObject(i);
+                GoodsEvaluate goodsEvaluate = (GoodsEvaluate)JSONObject.toJavaObject(goodsJson,GoodsEvaluate.class);
+               goodsEvaluate.setEvaluateCode(evaluateCode);
+               goodsEvaluateList.add(i,goodsEvaluate);
+            }
+            AppResponse appResponse = clientOrderService.addGoodsEvaluate(goodsEvaluateList,orderId);
+            return appResponse;
+        } catch (Exception e) {
+            logger.error("新增订单商品评价失败", e);
             System.out.println(e.toString());
             throw e;
         }

@@ -1,10 +1,11 @@
 package com.xzsd.app.manangerInformation.dao;
 
 import com.xzsd.app.manangerInformation.entity.ManangerInformation;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@Mapper
 public interface ManangerInformationDao {
     /**
      * 查询当前登录店长所属的区

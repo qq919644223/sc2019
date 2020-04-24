@@ -7,9 +7,11 @@ import com.neusoft.security.client.utils.SecurityUtils;
 import com.neusoft.util.StringUtil;
 import com.xzsd.app.clientOrder.dao.ClientOrderDao;
 import com.xzsd.app.clientOrder.entity.ClientOrderInfo;
+import com.xzsd.app.clientOrder.entity.GoodsEvaluate;
 import com.xzsd.app.clientOrder.entity.GoodsInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -139,5 +141,25 @@ public class ClientOrderService {
     public AppResponse listGoodsForEvaluate(String orderId){
         List<GoodsInfo> listGoodsForEvaluate = clientOrderDao.listGoodsForEvaluate(orderId);
         return AppResponse.success("查询成功！",listGoodsForEvaluate);
+    }
+
+    /**
+     * addGoodsEvaluate 新增订单商品评价
+     * @param goodsEvaluateList
+     * @param orderId
+     * @return AppResponse
+     * @Author chenchaotao
+     * @Date 2020-04-23
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse addGoodsEvaluate(List<GoodsEvaluate> goodsEvaluateList,String orderId) {
+        //获取当前登录人id
+        String userId = SecurityUtils.getCurrentUserId();
+        // 评价新增
+        int count = clientOrderDao.addGoodsEvaluate(goodsEvaluateList,userId,orderId);
+        if(0 == count) {
+            return AppResponse.bizError("新增失败，请重试！");
+        }
+        return AppResponse.success("新增成功！");
     }
 }

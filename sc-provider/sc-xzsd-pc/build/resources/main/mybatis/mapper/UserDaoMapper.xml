@@ -67,6 +67,16 @@
         </foreach>
     </update>
 
+    <!--查出原加密密码-->
+    <select id="findPwd" parameterType="com.xzsd.pc.user.entity.UserInfo" resultType="java.lang.String">
+        select
+          user_password
+        from
+          t_sys_user
+        where
+          user_code = #{userId}
+    </select>
+
     <!--修改用户信息-->
     <update id="updateUserById" parameterType="com.xzsd.pc.user.entity.UserInfo">
         update t_sys_user

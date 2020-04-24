@@ -1,6 +1,7 @@
 package com.xzsd.app.clientOrder.dao;
 
 import com.xzsd.app.clientOrder.entity.ClientOrderInfo;
+import com.xzsd.app.clientOrder.entity.GoodsEvaluate;
 import com.xzsd.app.clientOrder.entity.GoodsInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -77,4 +78,12 @@ public interface ClientOrderDao {
      * @return 查询结果
      */
     List<GoodsInfo> listGoodsForEvaluate(@Param("orderId") String orderId);
+
+    /**
+     * 新增商品评价
+     * @param goodsEvaluateList
+     * @param userId
+     * @return
+     */
+    int addGoodsEvaluate(@Param("goodsEvaluateList") List<GoodsEvaluate> goodsEvaluateList,@Param("userId") String userId,@Param("orderId") String orderId);
 }

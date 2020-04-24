@@ -58,4 +58,10 @@ public interface UserDao {
      */
     UserInfo findUserById(@Param("userId")String userId);
 
+    /**
+     * 查出原加密密码
+     * @param userInfo
+     * @return 原加密密码
+     */
+    String findPwd(UserInfo userInfo);
 }

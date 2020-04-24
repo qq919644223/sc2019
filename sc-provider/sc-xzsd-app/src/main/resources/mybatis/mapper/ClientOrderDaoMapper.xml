@@ -250,4 +250,39 @@
         where
           a.order_code = #{orderId}
     </select>
+
+    <!--新增订单商品评价-->
+    <insert id="addGoodsEvaluate" parameterType="java.util.List">
+        insert into t_goods_evaluate
+        (
+        evaluate_code,
+        cust_code,
+        order_code,
+        goods_code,
+        evaluate_score,
+        evaluate_info,
+        is_delete,
+        create_user,
+        create_time,
+        update_user,
+        update_time,
+        version
+        )
+        values
+        <foreach item="item" collection="goodsEvaluateList" separator="," >
+            (
+            #{item.evaluateCode},
+            #{userId},
+            #{orderId},
+            #{item.goodsId},
+            #{item.evaluateScore},
+            #{item.evaluateContent},
+            0,
+            #{userId},
+            now(),
+            #{userId},
+            now(),
+            0)
+        </foreach>
+    </insert>
 </mapper>

@@ -12,6 +12,7 @@ dependencies {
     // https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api
     compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0-m02',
             'org.springframework.boot:spring-boot-configuration-processor',
+            'com.alibaba:fastjson:1.2.57',
             'junit:junit:4.12',
             compile	('com.qcloud:cos_api:5.6.8'){
                 exclude group :'org.slf4j' , module: 'slf4j-log4j12'

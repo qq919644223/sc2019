@@ -11,6 +11,14 @@ import java.util.List;
 
 @Mapper
 public interface ClientOrderDao {
+
+    /**
+     * 检验用户是否绑定了门店邀请码
+     * @param userId
+     * @return
+     */
+    String findInviteCode(@Param("userId")String userId);
+
     /**
      * 检验订单中的商品是否还有库存
      * @param listGoodsId

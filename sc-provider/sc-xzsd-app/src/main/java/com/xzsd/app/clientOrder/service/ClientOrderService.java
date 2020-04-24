@@ -11,7 +11,6 @@ import com.xzsd.app.clientOrder.entity.GoodsEvaluate;
 import com.xzsd.app.clientOrder.entity.GoodsInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -45,6 +44,11 @@ public class ClientOrderService {
         List<String> listGoodsPrice = Arrays.asList(goodsPrice.split(","));
         List<String> listClientGoodsNum = Arrays.asList(clientGoodsNum.split(","));
         List<ClientOrderInfo> listOrder = new ArrayList<>();
+        //校验客户是否绑定了门店邀请码
+        String inviteCode = clientOrderDao.findInviteCode(userId);
+        if ("".equals(inviteCode)){
+            return AppResponse.bizError("未绑定门店邀请码，请先绑定再下单");
+        }
         //先检验订单中的商品是否还有库存，若其中一个商品没有库存，则下单失败
         List<Integer> countStock = clientOrderDao.countStock(listGoodsId);
         if (countStock.size() == 0){
@@ -60,6 +64,7 @@ public class ClientOrderService {
         //订单总商品数量
         int totalCount = 0;
         String orderId = StringUtil.getCommonCode(2);
+        //将订单请求参数封装进listOrder，方便sql的for-each插入
         for (int i = 0; i < listGoodsId.size(); i++) {
             int goodsNum = Integer.parseInt(listClientGoodsNum.get(i));
             totalCount+=goodsNum;

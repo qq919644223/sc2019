@@ -40,16 +40,25 @@
             <result column="goods_code" property="goodsId" jdbcType="VARCHAR" />
         </collection>
     </resultMap>
+   <!--检验用户是否绑定了门店邀请码-->
+   <select id="findInviteCode" parameterType="java.lang.String" resultType="java.lang.String">
+       select
+         invitation_code
+       from
+         t_customer_info
+       where
+         user_code = #{userId}
+   </select>
     <!--检验订单中的商品是否还有库存-->
     <select id="countStock" resultType="int">
         select
-        stock
+          stock
         from
-        t_goods_info
+          t_goods_info
         where
-        is_delete = 0
+          is_delete = 0
         and
-        goods_code in
+          goods_code in
         <foreach item="item" index="index" collection="listGoodsId" open="(" separator="," close=")">
             #{item}
         </foreach>

@@ -95,4 +95,14 @@
             #{item}
         </foreach>
     </update>
+
+    <!--修改时通过购物车中的商品编号查出商品库存-->
+    <select id="findGoodsStock" parameterType="com.xzsd.app.clientShopCart.entity.ClientShopCartInfo" resultType="int">
+        select
+          stock
+        from
+          t_goods_info
+        where
+          goods_code = (select goods_code from t_shopping_cart where shop_cart_code = #{shopCartId})
+    </select>
 </mapper>

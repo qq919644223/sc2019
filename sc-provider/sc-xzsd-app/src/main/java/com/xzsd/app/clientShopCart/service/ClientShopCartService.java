@@ -78,7 +78,12 @@ public class ClientShopCartService {
     @Transactional(rollbackFor = Exception.class)
     public AppResponse updateShoppingCart(ClientShopCartInfo clientShopCartInfo){
         AppResponse appResponse = AppResponse.success("修改成功");
-        //修改购物车
+        // 修改购物车商品数量时查出相应库存，判断修改数量是否超出库存
+        int countGoodsStock = clientShopCartDao.findGoodsStock(clientShopCartInfo);
+        if (countGoodsStock < clientShopCartInfo.getCartGoodsCount()){
+            return AppResponse.bizError("商品库存不足，请重新修改数量");
+        }
+        //修改购物车商品数量
         int count = clientShopCartDao.updateShoppingCart(clientShopCartInfo);
         if (0 == count){
             appResponse = AppResponse.versionError("数据无变化，请刷新！");

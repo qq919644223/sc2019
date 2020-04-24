@@ -11,6 +11,17 @@
             and shop_cart_code != #{shopCartId}
         </if>
     </select>
+
+    <!--检验商品库存-->
+    <select id="findStock" parameterType="com.xzsd.app.clientShopCart.entity.ClientShopCartInfo" resultType="int">
+        select
+          stock
+        from
+          t_goods_info
+        where
+          goods_code = #{goodsId}
+    </select>
+
     <!--购物车新增-->
     <insert id="addShoppingCart" parameterType="com.xzsd.app.clientShopCart.entity.ClientShopCartInfo">
         insert into t_shopping_cart

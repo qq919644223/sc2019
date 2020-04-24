@@ -51,4 +51,11 @@ public interface ClientShopCartDao {
      */
     int deleteShoppingCart(@Param("listCode") List<String> listCode, @Param("userId") String userId);
 
+    /**
+     * 修改时根据购物车编号查出商品库存
+     * @param clientShopCartInfo
+     * @return
+     */
+    int findGoodsStock(ClientShopCartInfo clientShopCartInfo);
+
 }

@@ -48,6 +48,8 @@
          t_customer_info
        where
          user_code = #{userId}
+       and
+         is_delete = 0
    </select>
     <!--检验订单中的商品是否还有库存-->
     <select id="countStock" resultType="int">
@@ -174,9 +176,10 @@
           version
         from
           t_order_info
-        <if test="orderStateId != null and orderStateId != ''">
         where
-          order_status = #{orderStateId}
+          is_delete = 0
+        <if test="orderStateId != null and orderStateId != ''">
+         and  order_status = #{orderStateId}
         </if>
         order by create_time desc
     </select>
@@ -196,6 +199,8 @@
         on a.goods_code = b.goods_code
         where
           a.order_code = #{orderCode}
+        and
+          a.is_delete = 0
     </select>
 
     <!--修改订单状态-->
@@ -228,6 +233,8 @@
         on a.store_code = b.store_code
         where
           a.order_code = #{orderId}
+        and
+          a.is_delete = 0
     </select>
 
     <!--查询该订单下的所有商品-->
@@ -245,6 +252,8 @@
         on a.goods_code = b.goods_code
         where
           a.order_code = #{orderCode}
+        and
+          a.is_delete = 0
     </select>
 
     <!--查询订单评价商品信息列表-->
@@ -258,6 +267,8 @@
         on a.goods_code = b.goods_code
         where
           a.order_code = #{orderId}
+        and
+          a.is_delete = 0
     </select>
 
     <!--新增订单商品评价-->
@@ -315,6 +326,8 @@
         t_goods_evaluate
         where
         goods_code = #{item.goodsId}
+        and
+        is_delete = 0
         </foreach>
     </select>
 

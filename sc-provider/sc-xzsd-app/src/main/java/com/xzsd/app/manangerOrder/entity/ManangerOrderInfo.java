@@ -48,13 +48,21 @@ public class ManangerOrderInfo {
      */
     private String storeId;
     /**
+     * 门店名称
+     */
+    private String storeName;
+    /**
+     * 详细地址
+     */
+    private String address;
+    /**
      * 作废标记 0为存在，1为作废
      */
     private int isDeleted;
     /**
      * 创建时间
      */
-    private String gmtCreate;
+    private String crateTime;
     /**
      * 创建者
      */
@@ -160,6 +168,22 @@ public class ManangerOrderInfo {
         this.storeId = storeId;
     }
 
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public int getIsDeleted() {
         return isDeleted;
     }
@@ -168,12 +192,12 @@ public class ManangerOrderInfo {
         this.isDeleted = isDeleted;
     }
 
-    public String getGmtCreate() {
-        return gmtCreate;
+    public String getCrateTime() {
+        return crateTime;
     }
 
-    public void setGmtCreate(String gmtCreate) {
-        this.gmtCreate = gmtCreate;
+    public void setCrateTime(String crateTime) {
+        this.crateTime = crateTime;
     }
 
     public String getCreateBy() {

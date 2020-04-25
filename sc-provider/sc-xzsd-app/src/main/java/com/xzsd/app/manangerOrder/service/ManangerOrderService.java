@@ -62,4 +62,16 @@ public class ManangerOrderService {
         }
         return appResponse;
     }
+
+    /**
+     * listManagerOrderDeepen 查询店长订单详情
+     * @param orderId
+     * @return AppResponse
+     * @Author chenchaotao
+     * @Date 2020-04-22
+     */
+    public AppResponse listManagerOrderDeepen(String orderId){
+        ManangerOrderInfo manangerOrderInfo = manangerOrderDao.listManagerOrderDeepen(orderId);
+        return AppResponse.success("查询成功",manangerOrderInfo);
+    }
 }

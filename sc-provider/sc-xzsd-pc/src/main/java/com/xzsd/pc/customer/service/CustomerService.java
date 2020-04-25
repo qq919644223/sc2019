@@ -38,7 +38,7 @@ public class CustomerService {
         //如果是店长登录，则通过邀请码查询自己门店下的客户
         if (customerInfo.getRole() == 1) {
             String invitationCode = customerDao.findCode(userId);
-            if ("".equals(invitationCode)){
+            if (invitationCode == null){
                 return AppResponse.bizError("还未有邀请码，请先新增门店信息");
             }
             customerInfo.setInvitationCode(invitationCode);

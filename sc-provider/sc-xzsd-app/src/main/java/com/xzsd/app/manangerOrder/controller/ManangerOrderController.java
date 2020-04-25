@@ -56,4 +56,23 @@ public class ManangerOrderController {
             throw e;
         }
     }
+
+    /**
+     * listManagerOrderDeepen 查询店长订单详情
+     * @param orderId
+     * @return AppResponse
+     * @author chenchaotao
+     * @Date 2020-04-22
+     */
+    @RequestMapping(value = "listManagerOrderDeepen")
+    public AppResponse listManagerOrderDeepen(String orderId){
+        try{
+            return manangerOrderService.listManagerOrderDeepen(orderId);
+        }catch (Exception e){
+            logger.error("查询店长订单详情异常",e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
+
 }

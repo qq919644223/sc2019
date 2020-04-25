@@ -22,6 +22,30 @@
             <result column="goods_code" property="goodsId" jdbcType="VARCHAR" />
         </collection>
     </resultMap>
+
+    <!--店长订单详情集合-->
+    <resultMap id="orderDetailMap" type="com.xzsd.app.manangerOrder.entity.ManangerOrderInfo">
+        <id column="order_code" property="orderId" jdbcType="VARCHAR" />
+        <result column="create_time" property="crateTime" jdbcType="VARCHAR" />
+        <result column="order_status" property="orderStateId" jdbcType="VARCHAR" />
+        <result column="user_code" property="userId" jdbcType="VARCHAR" />
+        <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+        <result column="name" property="userName" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="order_price" property="orderAllCost" jdbcType="VARCHAR" />
+        <result column="goods_total_num" property="orderAllGoodsCount" jdbcType="VARCHAR" />
+        <result column="version" property="version" jdbcType="VARCHAR" />
+        <!--订单里全部种类商品基本信息集合-->
+        <collection property="goodsList" ofType="com.xzsd.app.manangerOrder.entity.GoodsInfo" select="selectDetailGoods" column="order_code">
+            <id column="order_code" property="orderCode" jdbcType="VARCHAR" />
+            <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+            <result column="image_url" property="goodsImagePath" jdbcType="VARCHAR"/>
+            <result column="detail" property="goodsDescribe" jdbcType="VARCHAR"/>
+            <result column="goods_price" property="goodsPrice" jdbcType="VARCHAR"/>
+            <result column="goods_cnt" property="cartGoodsCount" jdbcType="VARCHAR"/>
+            <result column="goods_code" property="goodsId" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
     <select id="findCode" parameterType="java.lang.String" resultType="java.lang.String">
         select
           store_code
@@ -29,6 +53,8 @@
           t_store_info
         where
           user_code = #{userId}
+        and
+          is_delete = 0
     </select>
     <!--店长订单列表-->
     <select id="listManagerOrdersByPage" parameterType="com.xzsd.app.manangerOrder.entity.ManangerOrderInfo" resultMap="orderMap">
@@ -47,6 +73,8 @@
         on a.user_code = b.user_code
         where
           a.store_code = #{storeId}
+        and
+          a.is_delete = 0
         <if test="orderStateId != null and orderStateId != ''">
          and
           a.order_status = #{orderStateId}
@@ -70,6 +98,8 @@
         on a.goods_code = b.goods_code
         where
           a.order_code = #{orderCode}
+        and
+          a.is_delete = 0
         order by
           a.create_time desc
     </select>
@@ -87,4 +117,58 @@
         and
           version = #{version}
     </update>
+
+    <!--查询店长订单详情-->
+    <select id="listManagerOrderDeepen" parameterType="com.xzsd.app.manangerOrder.entity.ManangerOrderInfo" resultMap="orderDetailMap">
+        select distinct
+        a.order_code,
+        a.create_time,
+        a.order_status,
+        b.name,
+        b.phone,
+        c.store_name,
+        CONCAT_WS('-',d.dict_name,e.dict_name,f.dict_name ) as address,
+        a.order_price,
+        a.goods_total_num,
+        a.version
+        from
+        t_order_info a
+        left join t_sys_user b
+        on a.user_code = b.user_code
+        left join t_store_info c
+        on a.store_code = c.store_code
+        left join t_dictionary d
+        on c.province_id = d.dict_value
+        left join t_dictionary e
+        on c.city_id = e.dict_value
+        left join t_dictionary f
+        on c.area_id = f.dict_value
+        where
+        a.order_code = #{orderId}
+        and
+        a.is_delete = 0
+        order by
+        a.create_time desc
+    </select>
+
+    <!--查询订单里全部种类商品基本信息-->
+    <select id="selectDetailGoods" parameterType="com.xzsd.app.manangerOrder.entity.ManangerOrderInfo" resultType="com.xzsd.app.manangerOrder.entity.GoodsInfo">
+        select
+          b.goods_name goodsName,
+          b.image_url goodsImagePath,
+          b.detail goodsDescribe,
+          a.goods_price goodsPrice,
+          a.goods_cnt cartGoodsCount,
+          a.goods_code goodsId
+        from
+          t_order_detail a
+        left join t_goods_info b
+        on a.goods_code = b.goods_code
+        where
+          a.order_code = #{orderCode}
+        and
+          a.is_delete = 0
+        order by
+          a.create_time desc
+    </select>
 </mapper>

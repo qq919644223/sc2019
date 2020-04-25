@@ -9,6 +9,8 @@
           t_store_info
         where
           invitation_code = #{inviteCode}
+        and
+          is_delete = 0
     </select>
 
     <!--修改邀请码-->

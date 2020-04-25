@@ -9,6 +9,8 @@
           t_store_info
         where
           user_code = #{userId}
+        and
+          is_delete = 0
     </select>
 
     <!--查询店长门下的司机信息-->
@@ -22,5 +24,7 @@
         on a.driver_code = b.user_code
         where
           a.area_id = #{areaId}
+        and
+          is_delete = 0
     </select>
 </mapper>

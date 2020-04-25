@@ -9,6 +9,8 @@
           t_driver_info
         where
           driver_code = #{userId}
+        and
+          is_delete = 0
     </select>
 
     <!--查询司机负责的门店信息-->

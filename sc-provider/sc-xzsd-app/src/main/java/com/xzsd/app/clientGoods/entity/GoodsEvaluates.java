@@ -46,7 +46,7 @@ public class GoodsEvaluates {
     /**
      * 创建时间
      */
-    private String gmtCreate;
+    private String createTime;
     /**
      * 创建者
      */
@@ -136,12 +136,12 @@ public class GoodsEvaluates {
         this.isDeleted = isDeleted;
     }
 
-    public String getGmtCreate() {
-        return gmtCreate;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setGmtCreate(String gmtCreate) {
-        this.gmtCreate = gmtCreate;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
     public String getCreateBy() {

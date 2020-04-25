@@ -28,4 +28,11 @@ public interface ManangerOrderDao {
      * @return 修改结果
      */
     int updateManangerOrderState(ManangerOrderInfo manangerOrderInfo);
+
+    /**
+     * 查询店长订单详情
+     * @param orderId
+     * @return
+     */
+    ManangerOrderInfo listManagerOrderDeepen(@Param("orderId") String orderId);
 }

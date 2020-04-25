@@ -62,7 +62,9 @@
           a.version version
         from t_menu a
         where a.is_delete = 0
-        and a.role = #{role}
+        <if test="role == 1">
+            and a.role = 1
+        </if>
         order by a.create_time desc
     </select>
 

@@ -219,6 +219,8 @@
           t_dictionary
         where
           parent_code = #{cateId}
+        and
+          is_delete = 0
     </select>
 
 </mapper>

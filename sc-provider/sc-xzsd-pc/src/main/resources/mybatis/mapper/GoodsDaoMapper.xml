@@ -222,6 +222,8 @@
           t_goods_classification
         where
           cate_code_parent = #{classifyId}
+        and
+          is_delete = 0
     </select>
 
 </mapper>

@@ -36,6 +36,8 @@
           t_sys_user
         where
           user_code = #{userId}
+        and
+          is_delete = 0
     </select>
 
     <!--通过用户编号找到邀请码-->
@@ -46,6 +48,8 @@
           t_store_info
         where
           user_code = #{userId}
+        and
+          is_delete = 0
     </select>
 
 </mapper>

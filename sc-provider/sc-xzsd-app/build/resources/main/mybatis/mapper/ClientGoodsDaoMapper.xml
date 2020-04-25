@@ -9,12 +9,7 @@
         <result column="evaluate_info" property="evaluateContent" jdbcType="VARCHAR" />
         <result column="evaluate_score" property="evaluateScore" jdbcType="VARCHAR"/>
         <result column="goods_code" property="goodsId" jdbcType="VARCHAR"/>
-        <result column="create_time" property="gmtCreate" jdbcType="VARCHAR"/>
-        <collection property="imageList" ofType="com.xzsd.app.clientGoods.entity.EvaluateImage" select="selectPicture" column="cust_code">
-            <id column="image_code" property="imageCode" jdbcType="VARCHAR" />
-            <result column="imagePath" property="imagePath" jdbcType="VARCHAR" />
-            <result column="user_code" property="userId" jdbcType="VARCHAR"/>
-        </collection>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
     </resultMap>
     <!--二级商品分类以及商品-->
     <resultMap id="firstGoodsClassify" type="com.xzsd.app.clientGoods.entity.FirstGoodsClassify" >
@@ -65,16 +60,6 @@
             and a.evaluate_score = #{evaluateScore}
         </if>
     </select>
-    <!--评价图片-->
-    <select id="selectPicture" parameterType="com.xzsd.app.clientGoods.entity.GoodsEvaluates" resultType="com.xzsd.app.clientGoods.entity.EvaluateImage">
-        select
-          image_url imagePath
-        from
-          t_evaluate_picture
-        where
-          user_code = #{userId}
-        order by image_num desc
-    </select>
 
     <!--查询一级商品分类列表-->
     <select id="listOneGoodsClassify" parameterType="java.lang.String" resultType="com.xzsd.app.clientGoods.entity.FirstGoodsClassify">
@@ -84,7 +69,7 @@
         from
           t_goods_classification
         where
-          level = 1
+          cate_code_parent = 0
     </select>
 
     <!--查询二级商品分类以及商品-->
@@ -106,8 +91,6 @@
           a.is_delete = 0
         and
           a.cate_code_parent = #{classifyId}
-        and
-          a.level = 2
         order by
           a.create_time desc
     </select>

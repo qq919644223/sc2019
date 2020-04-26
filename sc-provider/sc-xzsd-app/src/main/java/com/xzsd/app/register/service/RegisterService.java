@@ -2,6 +2,7 @@ package com.xzsd.app.register.service;
 
 import com.neusoft.core.restful.AppResponse;
 import com.neusoft.util.StringUtil;
+import com.xzsd.app.clientInformation.dao.ClientInformationDao;
 import com.xzsd.app.register.dao.RegisterDao;
 import com.xzsd.app.register.entity.RegisterInfo;
 import com.xzsd.app.util.PasswordUtils;
@@ -18,6 +19,8 @@ import javax.annotation.Resource;
 public class RegisterService {
     @Resource
     private RegisterDao registerDao;
+    @Resource
+    private ClientInformationDao clientInformationDao;
     /**
      * clientRegister 注册用户
      * @param registerInfo
@@ -27,6 +30,11 @@ public class RegisterService {
      */
     @Transactional(rollbackFor = Exception.class)
     public AppResponse clientRegister(RegisterInfo registerInfo) {
+        //校验邀请码是否存在
+        String countCode = clientInformationDao.findCode(registerInfo.getInviteCode());
+        if (countCode == null){
+            return AppResponse.bizError("该邀请码不存在，请重新输入");
+        }
         // 校验账号是否存在
         int countUser = registerDao.countUser(registerInfo);
         if(0 != countUser) {

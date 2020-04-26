@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xzsd.app.clientHome.dao.ClientHomeDao">
+    <!--查询热门位商品展示数量-->
+    <select id="findHotGoodsNum" resultType="int">
+        select
+          dict_value
+        from
+          t_dictionary
+        where
+          dict_type = 'hotNum'
+    </select>
+
+
     <!--轮播图信息-->
     <select id="listRotationCharHome" parameterType="com.xzsd.app.clientHome.entity.ClientHomeInfo" resultType="com.xzsd.app.clientHome.entity.ClientHomeInfo">
         select
@@ -35,5 +46,6 @@
           a.goods_code = b.goods_code
         order by
           a.sort_code desc
+        limit #{hotGoodsNum}
     </select>
 </mapper>

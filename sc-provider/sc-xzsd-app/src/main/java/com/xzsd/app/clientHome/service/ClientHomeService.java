@@ -40,6 +40,8 @@ public class ClientHomeService {
      */
     public AppResponse listHotGoods(ClientHomeInfo clientHomeInfo){
         List<ClientHomeInfo> clientHomeInfoList = clientHomeDao.listHotGoods(clientHomeInfo);
+        int hotGoodsNum = clientHomeDao.findHotGoodsNum();
+        clientHomeInfo.setHotGoodsNum(hotGoodsNum);
         return AppResponse.success("查询成功",clientHomeInfoList);
     }
 

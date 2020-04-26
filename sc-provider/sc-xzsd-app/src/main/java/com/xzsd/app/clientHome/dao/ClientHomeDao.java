@@ -8,6 +8,12 @@ import java.util.List;
 @Mapper
 public interface ClientHomeDao {
     /**
+     * 查询热门商品展示数量
+     * @return
+     */
+    int findHotGoodsNum();
+
+    /**
      * 获取轮播图信息
      * @param clientHomeInfo
      * @return 轮播图信息

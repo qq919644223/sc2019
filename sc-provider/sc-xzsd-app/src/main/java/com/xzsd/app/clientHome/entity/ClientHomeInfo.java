@@ -30,6 +30,11 @@ public class ClientHomeInfo {
      */
     private String goodsPrice;
 
+    /**
+     * 热门商品展示数量
+     */
+    private int hotGoodsNum;
+
     public String getSlideshowPath() {
         return slideshowPath;
     }
@@ -84,5 +89,13 @@ public class ClientHomeInfo {
 
     public void setGoodsPrice(String goodsPrice) {
         this.goodsPrice = goodsPrice;
+    }
+
+    public int getHotGoodsNum() {
+        return hotGoodsNum;
+    }
+
+    public void setHotGoodsNum(int hotGoodsNum) {
+        this.hotGoodsNum = hotGoodsNum;
     }
 }

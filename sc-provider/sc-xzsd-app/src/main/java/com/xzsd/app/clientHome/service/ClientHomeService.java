@@ -39,9 +39,9 @@ public class ClientHomeService {
      * @Date 2020-04-13
      */
     public AppResponse listHotGoods(ClientHomeInfo clientHomeInfo){
+        String hotGoodsNum = clientHomeDao.findHotGoodsNum();
+        clientHomeInfo.setHotGoodsNum(Integer.parseInt(hotGoodsNum));
         List<ClientHomeInfo> clientHomeInfoList = clientHomeDao.listHotGoods(clientHomeInfo);
-        int hotGoodsNum = clientHomeDao.findHotGoodsNum();
-        clientHomeInfo.setHotGoodsNum(hotGoodsNum);
         return AppResponse.success("查询成功",clientHomeInfoList);
     }
 

@@ -11,7 +11,7 @@ public interface ClientHomeDao {
      * 查询热门商品展示数量
      * @return
      */
-    int findHotGoodsNum();
+    String findHotGoodsNum();
 
     /**
      * 获取轮播图信息

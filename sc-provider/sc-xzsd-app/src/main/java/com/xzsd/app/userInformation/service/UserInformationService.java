@@ -1,6 +1,7 @@
 package com.xzsd.app.userInformation.service;
 
 import com.neusoft.core.restful.AppResponse;
+import com.neusoft.security.client.utils.SecurityUtils;
 import com.xzsd.app.userInformation.dao.UserInformationDao;
 import com.xzsd.app.userInformation.entity.UserInformation;
 import com.xzsd.app.util.PasswordUtils;
@@ -41,12 +42,16 @@ public class UserInformationService {
      */
     public AppResponse updateUserPassword(UserInformation userInformation) {
         AppResponse appResponse = AppResponse.success("修改密码成功！");
+        //获取角色
+        String userId = SecurityUtils.getCurrentUserId();
+        userInformation.setUserId(userId);
+        String role = userInformationDao.getUserRole(userId);
+        userInformation.setRole(role);
         // 需要校验原密码是否正确
         if(null != userInformation.getUserPassword() && !"".equals(userInformation.getUserPassword())) {
             String newPwd = userInformation.getUserPassword();
             // 获取用户信息
-            UserInformation userDetail = userInformationDao.findUserById(userInformation.getUserId());
-
+            UserInformation userDetail = userInformationDao.findUserById(userId);
             if(null == userDetail) {
                 return AppResponse.bizError("用户不存在或已被删除！");
             } else {

@@ -13,7 +13,7 @@ public interface UserInformationDao {
     String getUserRole(@Param("userId") String userId);
 
     /**
-     * 查询 查询个人信息
+     * 查询个人信息
      * @param userId 用户编号
      * @return 查询结果
      */

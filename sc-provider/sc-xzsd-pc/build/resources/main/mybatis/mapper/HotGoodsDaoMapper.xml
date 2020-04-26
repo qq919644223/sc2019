@@ -146,9 +146,7 @@
         from
           t_dictionary
         where
-          dict_name = '热门商品展示数量'
-        and
-          is_delete = 0
+          dict_type = 'hotNum'
     </select>
 
     <!--修改热门位商品展示数量-->
@@ -159,6 +157,6 @@
           dict_value = #{hotGoodsNum}
           version = version + 1
         where
-          dict_name = '热门商品展示数量'
+          dict_type = 'hotNum'
     </update>
 </mapper>

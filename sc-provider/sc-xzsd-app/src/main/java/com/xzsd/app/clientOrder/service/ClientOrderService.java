@@ -95,6 +95,8 @@ public class ClientOrderService {
      * @Date 2020-04-18
      */
     public AppResponse listOrder(ClientOrderInfo clientOrderInfo){
+        String userId = SecurityUtils.getCurrentUserId();
+        clientOrderInfo.setUserId(userId);
         PageHelper.startPage(clientOrderInfo.getPageNum(), clientOrderInfo.getPageSize());
         List<ClientOrderInfo> goodsEvaluatesList = clientOrderDao.listOrderByPage(clientOrderInfo);
         //包装Page对象
@@ -117,6 +119,17 @@ public class ClientOrderService {
         clientOrderInfo.setLastModifiedBy(userId);
         //修改订单状态
         int count = clientOrderDao.updateOrderState(clientOrderInfo);
+        //若取消了订单，则需返还相应的库存
+        if ("1".equals(clientOrderInfo.getOrderStateId())){
+            //查询该订单下每个商品的购买数量
+            List <ClientOrderInfo> listGoodsNum = clientOrderDao.findGoodsNum(clientOrderInfo);
+            //修改商品库存
+            clientOrderInfo.setUserId(userId);
+            int countStock = clientOrderDao.updateStock(listGoodsNum);
+            if (0 == count || 0 == countStock){
+                return AppResponse.versionError("数据无变化,清重试");
+            }
+        }
         if (0 == count){
             appResponse = AppResponse.versionError("数据无变化，请刷新！");
             return appResponse;

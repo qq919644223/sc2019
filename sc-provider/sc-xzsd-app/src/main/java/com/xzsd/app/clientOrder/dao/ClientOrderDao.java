@@ -3,6 +3,7 @@ package com.xzsd.app.clientOrder.dao;
 import com.xzsd.app.clientOrder.entity.ClientOrderInfo;
 import com.xzsd.app.clientOrder.entity.GoodsEvaluate;
 import com.xzsd.app.clientOrder.entity.GoodsInfo;
+import feign.Client;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.security.access.method.P;
@@ -72,6 +73,20 @@ public interface ClientOrderDao {
      * @return 修改结果
      */
     int updateOrderState(ClientOrderInfo clientOrderInfo);
+
+    /**
+     * 查询该订单下每个商品的购买数量
+     * @param clientOrderInfo
+     * @return
+     */
+    List <ClientOrderInfo> findGoodsNum(ClientOrderInfo clientOrderInfo);
+
+    /**
+     * 取消订单后恢复商品库存
+     * @param listGoodsNum
+     * @return
+     */
+    int updateStock(@Param("listGoodsNum") List<ClientOrderInfo> listGoodsNum);
 
     /**
      * 查询订单详情

@@ -178,6 +178,8 @@
           t_order_info
         where
           is_delete = 0
+        and
+          user_code = #{userId}
         <if test="orderStateId != null and orderStateId != ''">
          and  order_status = #{orderStateId}
         </if>
@@ -215,6 +217,34 @@
           order_code = #{orderId}
         and
           version = #{version}
+    </update>
+
+    <!--查询该订单下每个商品的购买数量-->
+    <select id="findGoodsNum" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo" resultType="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
+       select
+         a.goods_code goodsId,
+         a.goods_cnt clientGoodsNum,
+         b.stock stock
+       from
+         t_order_detail a
+       left join t_goods_info b
+       on a.goods_code = b.goods_code
+       where
+         a.order_code = #{orderId}
+        </select>
+
+    <!--取消订单后恢复商品库存-->
+    <update id="updateStock" parameterType="java.util.List">
+        <foreach item="item" collection="listGoodsNum" separator=";" >
+            update t_goods_info
+            set
+            stock = #{item.stock}+#{item.clientGoodsNum},
+            update_user = #{item.userId},
+            update_time = now(),
+            version = version + 1
+            where
+            goods_code = #{item.goodsId}
+        </foreach>
     </update>
 
     <!--查询订单详情-->

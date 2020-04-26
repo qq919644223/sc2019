@@ -4,6 +4,10 @@ import java.util.List;
 
 public class ClientOrderInfo {
     /**
+     * 用户编号
+     */
+    private String userId;
+    /**
      * 页码
      */
     private int pageSize;
@@ -103,6 +107,15 @@ public class ClientOrderInfo {
         this.goodsTotalPrice = goodsTotalPrice;
         this.stock = stock;
     }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public int getPageSize() {
         return pageSize;
     }

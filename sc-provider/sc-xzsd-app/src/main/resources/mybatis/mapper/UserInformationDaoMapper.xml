@@ -55,5 +55,8 @@
                update_user   = #{lastModifiedBy},
                version      = version + 1
          where user_code = #{userId}
+         <if test="role == 1 or role == 2">
+             and version = #{version}
+         </if>
     </update>
 </mapper>

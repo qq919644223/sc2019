@@ -109,13 +109,13 @@
         b.cate_name firstCategoryName,
         c.cate_name secondCategoryName,
         a.goods_status goodsStatus
-        from
-          t_goods_info a
         from t_goods_info a
         left join t_goods_classification b
         on a.first_classificationId = b.cate_code
         left join t_goods_classification c
         on a.second_classificationId = c.cate_code
+        where
+        a.is_delete = 0
         and a.goods_status = 0
         <if test="goodsName != null and goodsName != ''">
             and a.goods_name like concat('%', #{goodsName}, '%')

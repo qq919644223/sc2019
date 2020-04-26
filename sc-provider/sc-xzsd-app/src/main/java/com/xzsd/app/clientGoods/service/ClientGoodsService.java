@@ -62,7 +62,7 @@ public class ClientGoodsService {
     }
 
     /**
-     * listGetClassGoods
+     * listGetClassGoods 查询二级商品分类以及商品
      * @param classifyId
      * @return AppResponse
      * @author chenchaotao

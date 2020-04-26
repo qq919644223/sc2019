@@ -18,6 +18,7 @@
           a.user_code = b.driver_code
         <if test="role == 1">
             and b.area_id = (select area_id areaId from t_store_info where user_code = #{userId})
+            and b.city_id = (select city_id cityId from t_store_info where user_code = #{userId})
         </if>
         <if test="driverId != null and driverId != ''">
             and b.driver_code like concat('%', #{driverId}, '%')
@@ -219,6 +220,8 @@
           t_dictionary
         where
           parent_code = #{cateId}
+        and
+          is_delete = 0
     </select>
 
 </mapper>

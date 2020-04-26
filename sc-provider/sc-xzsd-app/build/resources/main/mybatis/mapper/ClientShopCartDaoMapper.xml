@@ -20,6 +20,8 @@
           t_goods_info
         where
           goods_code = #{goodsId}
+        and
+          is_delete = 0
     </select>
 
     <!--购物车新增-->
@@ -104,5 +106,7 @@
           t_goods_info
         where
           goods_code = (select goods_code from t_shopping_cart where shop_cart_code = #{shopCartId})
+        and
+          is_delete = 0
     </select>
 </mapper>

@@ -50,6 +50,8 @@
           t_store_info
         where
           user_code = #{userId}
+        and
+          is_delete = 0
     </select>
     <!--获取订单信息-->
     <select id="findOrderById" parameterType="java.lang.String" resultType="com.xzsd.pc.order.entity.OrderInfo">

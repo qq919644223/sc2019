@@ -55,6 +55,8 @@
         where
           a.cust_code = b.user_code
         and
+          a.is_delete = 0
+        and
           a.goods_code = #{goodsId}
         <if test="evaluateScore != null and evaluateScore != ''">
             and a.evaluate_score = #{evaluateScore}
@@ -70,6 +72,8 @@
           t_goods_classification
         where
           cate_code_parent = 0
+        and
+          is_delete = 0
     </select>
 
     <!--查询二级商品分类以及商品-->

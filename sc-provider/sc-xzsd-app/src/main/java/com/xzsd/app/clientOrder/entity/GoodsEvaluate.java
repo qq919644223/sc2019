@@ -2,6 +2,10 @@ package com.xzsd.app.clientOrder.entity;
 
 public class GoodsEvaluate {
     /**
+     * 订单编号
+     */
+    private String orderId;
+    /**
      * 用户编号
      */
     private String userId;
@@ -25,6 +29,15 @@ public class GoodsEvaluate {
      * 商品评价等级
      */
     private double goodsEvaluateScore;
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
     public String getUserId() {
         return userId;
     }

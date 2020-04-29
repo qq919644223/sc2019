@@ -21,25 +21,24 @@ public class ClientHomeService {
     private ClientHomeDao clientHomeDao;
     /**
      * listRotationCharHome 查询首页轮播图
-     * @param clientHomeInfo
      * @return AppResponse
      * @Author chenchaotao
      * @Date 2020-04-13
      */
-    public AppResponse listRotationCharHome(ClientHomeInfo clientHomeInfo){
-        List<ClientHomeInfo> clientHomeInfoList = clientHomeDao.listRotationCharHome(clientHomeInfo);
+    public AppResponse listRotationCharHome(){
+        List<ClientHomeInfo> clientHomeInfoList = clientHomeDao.listRotationCharHome();
         return AppResponse.success("查询成功",clientHomeInfoList);
     }
 
     /**
      * listHotGoods 查询热门商品
-     * @param clientHomeInfo
      * @return AppResponse
      * @Author chenchaotao
      * @Date 2020-04-13
      */
-    public AppResponse listHotGoods(ClientHomeInfo clientHomeInfo){
+    public AppResponse listHotGoods(){
         String hotGoodsNum = clientHomeDao.findHotGoodsNum();
+        ClientHomeInfo clientHomeInfo = new ClientHomeInfo();
         clientHomeInfo.setHotGoodsNum(Integer.parseInt(hotGoodsNum));
         List<ClientHomeInfo> clientHomeInfoList = clientHomeDao.listHotGoods(clientHomeInfo);
         return AppResponse.success("查询成功",clientHomeInfoList);

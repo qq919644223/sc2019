@@ -13,9 +13,9 @@
           is_delete = 0
     </select>
 
-    <!--获取用户信息-->
-    <select id="getUser" parameterType="java.lang.String" resultType="com.xzsd.app.userInformation.entity.UserInformation">
-         select
+    <!--获取店长用户信息-->
+    <select id="getStoreUser" parameterType="java.lang.String" resultType="com.xzsd.app.userInformation.entity.UserInformation">
+         select distinct
           a.name userName,
           a.image_url userImage,
           a.role role,
@@ -23,7 +23,6 @@
           b.store_name storeName,
           b.invitation_code inviteCode,
           CONCAT_WS('-',c.dict_name,d.dict_name,e.dict_name ) as address,
-          a.phone phone,
           a.version version
         from t_sys_user a
         left join t_store_info b
@@ -34,6 +33,62 @@
         on b.city_id = d.dict_value
         left join t_dictionary e
         on b.area_id = e.dict_value
+        where a.user_code = #{userId}
+        and a.is_delete = 0
+    </select>
+
+    <!--查询司机个人信息-->
+    <select id="getDriverUser" parameterType="java.lang.String" resultType="com.xzsd.app.userInformation.entity.UserInformation">
+       select distinct
+          a.name userName,
+          a.image_url userImage,
+          a.role role,
+          a.phone phone,
+          a.name driverName,
+          a.version version
+        from t_sys_user a
+        left join t_driver_info b
+        on a.user_code = b.driver_code
+        where a.user_code = #{userId}
+        and a.is_delete = 0
+    </select>
+
+    <!--获取客户个人信息-->
+    <select id="getUser" parameterType="java.lang.String" resultType="com.xzsd.app.userInformation.entity.UserInformation">
+        select distinct
+          a.name userName,
+          a.image_url userImage,
+          a.role role,
+          (select distinct t1.store_code
+					 from t_store_info t1
+					 LEFT JOIN t_customer_info t2
+					 ON t1.invitation_code = t2.invitation_code
+					 where t2.is_delete = 0
+					 and t2.user_code =  #{userId}) storeId,
+          (select distinct t1.store_name
+					 from t_store_info t1
+					 LEFT JOIN t_customer_info t2
+					 ON t1.invitation_code = t2.invitation_code
+					 where t2.is_delete = 0
+					 and t2.user_code = #{userId} ) storeName,
+          (select distinct
+						CONCAT_WS(' ',b.dict_name,c.dict_name,d.dict_name,a.store_address)
+						FROM
+						t_store_info a
+						LEFT JOIN t_dictionary b
+						ON a.province_id = b.dict_value
+						LEFT JOIN t_dictionary c
+						ON a.city_id = c.dict_value
+						LEFT JOIN t_dictionary d
+						ON a.area_id = d.dict_value
+						LEFT JOIN t_customer_info e
+						ON a.invitation_code = e.invitation_code
+						where a.is_delete = 0
+						and e.user_code = #{userId} )  as address,
+          a.version version
+        from t_sys_user a
+        left join t_customer_info b
+        on a.user_code = b.user_code
         where a.user_code = #{userId}
         and a.is_delete = 0
     </select>

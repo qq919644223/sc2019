@@ -53,9 +53,17 @@ public class ClientOrderInfo {
      */
     private int stock;
     /**
+     * 与购买数量相减后的库存
+     */
+    private int reduceStock;
+    /**
      * 门店名称
      */
     private String storeName;
+    /**
+     * 销售量
+     */
+    private int saleCount;
     /**
      * 作废标记 0为存在，1为作废
      */
@@ -204,12 +212,28 @@ public class ClientOrderInfo {
         this.stock = stock;
     }
 
+    public int getReduceStock() {
+        return reduceStock;
+    }
+
+    public void setReduceStock(int reduceStock) {
+        this.reduceStock = reduceStock;
+    }
+
     public String getStoreName() {
         return storeName;
     }
 
     public void setStoreName(String storeName) {
         this.storeName = storeName;
+    }
+
+    public int getSaleCount() {
+        return saleCount;
+    }
+
+    public void setSaleCount(int saleCount) {
+        this.saleCount = saleCount;
     }
 
     public int getIsDeleted() {

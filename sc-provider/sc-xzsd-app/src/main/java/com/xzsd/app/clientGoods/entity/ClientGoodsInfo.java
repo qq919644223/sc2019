@@ -42,6 +42,11 @@ public class ClientGoodsInfo {
      */
     private String storeName;
 
+    /**
+     * 版本号
+     */
+    private String version;
+
     public String getGoodsId() {
         return goodsId;
     }
@@ -120,5 +125,13 @@ public class ClientGoodsInfo {
 
     public void setStoreName(String storeName) {
         this.storeName = storeName;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

@@ -24,15 +24,14 @@ public class ClientHomeController {
 
     /**
      * listRotationCharHome 查询首页轮播图
-     * @param clientHomeInfo
      * @return AppResponse
      * @author chenchaotao
      * @Date 2020-04-13
      */
     @RequestMapping(value = "listRotationCharHome")
-    public AppResponse listRotationCharHome(ClientHomeInfo clientHomeInfo){
+    public AppResponse listRotationCharHome(){
         try{
-            return clientHomeService.listRotationCharHome(clientHomeInfo);
+            return clientHomeService.listRotationCharHome();
         }catch (Exception e){
             logger.error("查询首页轮播图异常",e);
             System.out.println(e.toString());
@@ -42,15 +41,14 @@ public class ClientHomeController {
 
     /**
      * listHotGoods 查询热门商品
-     * @param clientHomeInfo
      * @return AppResponse
      * @author chenchaotao
      * @Date 2020-04-13
      */
     @RequestMapping(value = "listHotGoods")
-    public AppResponse listHotGoods(ClientHomeInfo clientHomeInfo){
+    public AppResponse listHotGoods(){
         try{
-            return clientHomeService.listHotGoods(clientHomeInfo);
+            return clientHomeService.listHotGoods();
         }catch (Exception e){
             logger.error("查询热门商品异常",e);
             System.out.println(e.toString());

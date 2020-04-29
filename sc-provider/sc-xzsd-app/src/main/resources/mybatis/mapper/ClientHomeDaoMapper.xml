@@ -13,7 +13,7 @@
 
 
     <!--轮播图信息-->
-    <select id="listRotationCharHome" parameterType="com.xzsd.app.clientHome.entity.ClientHomeInfo" resultType="com.xzsd.app.clientHome.entity.ClientHomeInfo">
+    <select id="listRotationCharHome" resultType="com.xzsd.app.clientHome.entity.ClientHomeInfo">
         select
           image_url slideshowPath,
           goods_code goodsId
@@ -44,6 +44,8 @@
           a.is_delete = 0
         and
           a.goods_code = b.goods_code
+        and
+          b.goods_status = 1
         order by
           a.sort_code desc
         limit #{hotGoodsNum}

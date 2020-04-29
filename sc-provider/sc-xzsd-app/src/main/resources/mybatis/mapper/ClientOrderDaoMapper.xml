@@ -51,19 +51,20 @@
        and
          is_delete = 0
    </select>
+
     <!--检验订单中的商品是否还有库存-->
-    <select id="countStock" resultType="int">
+    <select id="countStock" resultType="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
         select
-          stock
+          goods_code goodsId,
+          stock stock
         from
           t_goods_info
         where
           is_delete = 0
-        and
-          goods_code in
+        and goods_code in
         <foreach item="item" index="index" collection="listGoodsId" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+           #{item}
+         </foreach>
     </select>
 
     <!--新增订单-->
@@ -160,8 +161,8 @@
         update_time = now(),
         update_user = #{userId},
         version = version + 1
-        where goods_code in
-        <foreach item="item" index="index" collection="listGoodsId" open="(" separator="," close=")">
+        where shop_cart_code in
+        <foreach item="item" index="index" collection="listShopCartId" open="(" separator="," close=")">
             #{item}
         </foreach>
     </update>
@@ -183,7 +184,7 @@
         <if test="orderStateId != null and orderStateId != ''">
          and  order_status = #{orderStateId}
         </if>
-        order by create_time desc
+        order by order_code desc
     </select>
 
     <!--查询订单里全部种类商品基本信息-->
@@ -224,7 +225,8 @@
        select
          a.goods_code goodsId,
          a.goods_cnt clientGoodsNum,
-         b.stock stock
+         b.stock stock,
+         b.sale_cnt saleCount
        from
          t_order_detail a
        left join t_goods_info b
@@ -322,15 +324,15 @@
         <foreach item="item" collection="goodsEvaluateList" separator="," >
             (
             #{item.evaluateCode},
-            #{userId},
-            #{orderId},
+            #{item.userId},
+            #{item.orderId},
             #{item.goodsId},
             #{item.evaluateScore},
             #{item.evaluateContent},
             0,
-            #{userId},
+            #{item.userId},
             now(),
-            #{userId},
+            #{item.userId},
             now(),
             0)
         </foreach>
@@ -350,20 +352,20 @@
 
     <!--计算评价后的商品星级-->
     <select id="countScore" parameterType="java.util.List" resultType="java.lang.Double">
-        <foreach item="item" collection="goodsEvaluateList" separator="," >
         select avg(evaluate_score)
         from
         t_goods_evaluate
         where
-        goods_code = #{item.goodsId}
-        and
         is_delete = 0
+        and goods_code in
+        <foreach item="item" index="index" collection="goodsEvaluateList" open="(" separator="," close=")">
+         #{item}
         </foreach>
     </select>
 
     <!--更新商品评价星级-->
     <update id="updateScore" parameterType="java.lang.Double">
-        <foreach item="item" collection="goodsEvaluateList" separator=",">
+        <foreach item="item" collection="goodsEvaluateList" separator=";">
         update t_goods_info
         set
         star_level = #{item.goodsEvaluateScore},
@@ -372,6 +374,20 @@
         version = version + 1
         where
         goods_code = #{item.goodsId}
+        </foreach>
+    </update>
+
+    <!--更新商品销售量-->
+    <update id="updateSaleCount" parameterType="java.util.List">
+        <foreach item="item" collection="listGoodsNum" separator=";" >
+            update t_goods_info
+            set
+            stock = #{item.saleCount}+#{item.clientGoodsNum},
+            update_user = #{item.userId},
+            update_time = now(),
+            version = version + 1
+            where
+            goods_code = #{item.goodsId}
         </foreach>
     </update>
 </mapper>

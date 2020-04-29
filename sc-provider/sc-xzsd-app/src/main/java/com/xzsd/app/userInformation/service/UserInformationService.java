@@ -27,10 +27,21 @@ public class UserInformationService {
      * @Date 2020-04-14
      */
     public AppResponse getUser(String userId){
-//查询当前登录的角色
+        //查询当前登录的角色
         String role = userInformationDao.getUserRole(userId);
-        UserInformation userInformation = userInformationDao.getUser(userId);
-        return AppResponse.success("查询成功！",userInformation);
+        if ("1".equals(role)){
+            UserInformation userInformation = userInformationDao.getStoreUser(userId);
+            return AppResponse.success("查询成功！",userInformation);
+        }
+        if ("2".equals(role)){
+            UserInformation userInformation = userInformationDao.getDriverUser(userId);
+            return AppResponse.success("查询成功！",userInformation);
+        }
+        if ("3".equals(role)){
+            UserInformation userInformation = userInformationDao.getUser(userId);
+            return AppResponse.success("查询成功！",userInformation);
+        }
+        return AppResponse.success("查询失败！");
     }
 
     /**

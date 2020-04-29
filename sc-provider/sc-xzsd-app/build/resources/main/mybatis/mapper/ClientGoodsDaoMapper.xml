@@ -25,15 +25,17 @@
     <!--获取商品信息-->
     <select id="getGoods" parameterType="java.lang.String" resultType="com.xzsd.app.clientGoods.entity.ClientGoodsInfo">
        select
+         goods_code goodsId,
          goods_name goodsName,
          book_no isbn,
          detail goodsDescribe,
          store_name storeName,
-         selling_price sellingPrice,
+         selling_price goodsPrice,
          image_url goodsImagePath,
          star_level goodsEvaluateScore,
          press goodsPress,
-         writer goodsAuthor
+         writer goodsAuthor,
+         version version
        from
          t_goods_info
        where

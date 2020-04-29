@@ -15,10 +15,9 @@ public interface ClientHomeDao {
 
     /**
      * 获取轮播图信息
-     * @param clientHomeInfo
      * @return 轮播图信息
      */
-    List<ClientHomeInfo> listRotationCharHome(ClientHomeInfo clientHomeInfo);
+    List<ClientHomeInfo> listRotationCharHome();
 
     /**
      * 获取热门商品信息

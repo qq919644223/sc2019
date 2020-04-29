@@ -13,7 +13,21 @@ public interface UserInformationDao {
     String getUserRole(@Param("userId") String userId);
 
     /**
-     * 查询个人信息
+     * 查询店长个人信息
+     * @param userId 用户编号
+     * @return 查询结果
+     */
+    UserInformation getStoreUser(@Param("userId")String userId);
+
+    /**
+     * 查询司机个人信息
+     * @param userId 用户编号
+     * @return 查询结果
+     */
+    UserInformation getDriverUser(@Param("userId")String userId);
+
+    /**
+     * 查询客户个人信息
      * @param userId 用户编号
      * @return 查询结果
      */

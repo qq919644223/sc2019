@@ -7,7 +7,7 @@
         select
         a.store_code storeId,
         a.store_name storeName,
-        b.phone phone,
+        a.phone phone,
         a.store_address address,
         b.name managerName,
         a.invitation_code invitationCode,

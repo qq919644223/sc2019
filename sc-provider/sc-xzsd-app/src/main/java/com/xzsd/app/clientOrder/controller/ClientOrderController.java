@@ -34,16 +34,21 @@ public class ClientOrderController {
     private ClientOrderService clientOrderService;
     /**
      * addOrder 新增订单
+     * @param goodsId
+     * @param goodsPrice
+     * @param clientGoodsNum
+     * @param shopCartId
+     * @param storeId
      * @return AppResponse
      * @author chenchaotao
      * @Date 2020-04-18
      */
     @PostMapping("addOrder")
-    public AppResponse addOrder(String goodsId,String goodsPrice,String clientGoodsNum,String storeId) {
+    public AppResponse addOrder(String goodsId,String goodsPrice,String clientGoodsNum,String shopCartId,String storeId) {
         try {
             //获取用户id
             String userId = SecurityUtils.getCurrentUserId();
-            AppResponse appResponse = clientOrderService.addOrder(goodsId,goodsPrice,clientGoodsNum,storeId,userId);
+            AppResponse appResponse = clientOrderService.addOrder(goodsId,goodsPrice,clientGoodsNum,shopCartId,storeId,userId);
             return appResponse;
         } catch (Exception e) {
             logger.error("订单新增失败", e);
@@ -137,6 +142,7 @@ public class ClientOrderController {
             JSONObject orderEvaluateJson = order.getJSONObject("orderEvaluate");
             OrderEvaluate orderEvaluate = (OrderEvaluate) JSONObject.toJavaObject(orderEvaluateJson,OrderEvaluate.class);
             String orderId = orderEvaluate.getOrderId();
+            String userId = SecurityUtils.getCurrentUserId();
             JSONArray goodsEvaluateJson = orderEvaluateJson.getJSONArray("evaluateList");
             List<GoodsEvaluate> goodsEvaluateList = new ArrayList<GoodsEvaluate>();
             for (int i = 0; i < goodsEvaluateJson.size(); i++) {
@@ -144,6 +150,8 @@ public class ClientOrderController {
                 JSONObject goodsJson = (JSONObject) goodsEvaluateJson.getJSONObject(i);
                 GoodsEvaluate goodsEvaluate = (GoodsEvaluate)JSONObject.toJavaObject(goodsJson,GoodsEvaluate.class);
                goodsEvaluate.setEvaluateCode(evaluateCode);
+               goodsEvaluate.setUserId(userId);
+               goodsEvaluate.setOrderId(orderId);
                goodsEvaluateList.add(i,goodsEvaluate);
             }
             AppResponse appResponse = clientOrderService.addGoodsEvaluate(goodsEvaluateList,orderId);

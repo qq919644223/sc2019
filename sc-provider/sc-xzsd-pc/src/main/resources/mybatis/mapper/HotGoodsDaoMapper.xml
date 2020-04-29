@@ -22,7 +22,7 @@
         <if test="goodsCode != null and goodsCode != ''">
             and a.goods_code like concat('%', #{goodsCode}, '%')
         </if>
-        order by a.sort_code desc
+        order by a.sort_code asc
     </select>
 
     <!--统计商品编号和排序号数量-->

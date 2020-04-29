@@ -31,9 +31,11 @@ public class RegisterService {
     @Transactional(rollbackFor = Exception.class)
     public AppResponse clientRegister(RegisterInfo registerInfo) {
         //校验邀请码是否存在
-        String countCode = clientInformationDao.findCode(registerInfo.getInviteCode());
-        if (countCode == null){
-            return AppResponse.bizError("该邀请码不存在，请重新输入");
+        if (registerInfo.getInviteCode() != null) {
+            String countCode = clientInformationDao.findCode(registerInfo.getInviteCode());
+            if (countCode == null) {
+                return AppResponse.bizError("该邀请码不存在，请重新输入");
+            }
         }
         // 校验账号是否存在
         int countUser = registerDao.countUser(registerInfo);

@@ -25,7 +25,7 @@ public interface ClientOrderDao {
      * @param listGoodsId
      * @return 库存列表
      */
-    List<Integer> countStock(@Param("listGoodsId") List<String> listGoodsId);
+    List<ClientOrderInfo> countStock(@Param("listGoodsId") List<String> listGoodsId);
 
     /**
      * 新增订单
@@ -54,11 +54,11 @@ public interface ClientOrderDao {
 
     /**
      * 删除购物车信息
-     * @param listGoodsId 选中的购物车商品编号集合
+     * @param listShopCartId 选中的购物车编号集合
      * @param userId 更新人
      * @return
      */
-    int deleteCartGoods(@Param("listGoodsId") List<String> listGoodsId, @Param("userId") String userId);
+    int deleteCartGoods(@Param("listShopCartId") List<String> listShopCartId, @Param("userId") String userId);
 
     /**
      * 查询订单列表
@@ -105,10 +105,9 @@ public interface ClientOrderDao {
     /**
      * 新增商品评价
      * @param goodsEvaluateList
-     * @param userId
      * @return
      */
-    int addGoodsEvaluate(@Param("goodsEvaluateList") List<GoodsEvaluate> goodsEvaluateList,@Param("userId") String userId,@Param("orderId") String orderId);
+    int addGoodsEvaluate(@Param("goodsEvaluateList") List<GoodsEvaluate> goodsEvaluateList);
 
     /**
      * 评价完将订单状态改为已完成已评价
@@ -128,4 +127,11 @@ public interface ClientOrderDao {
      * @return
      */
     int updateScore(@Param("goodsEvaluateList") List<GoodsEvaluate> goodsEvaluateList);
+
+    /**
+     * 评价后更新商品销售量
+     * @param listGoodsNum
+     * @return
+     */
+    int updateSaleCount(@Param("listGoodsNum") List<ClientOrderInfo> listGoodsNum);
 }

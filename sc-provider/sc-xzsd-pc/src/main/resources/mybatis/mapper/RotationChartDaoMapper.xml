@@ -82,7 +82,7 @@
         and image_status = #{pictureStatus}
         </if>
         order by
-          a.sort_code desc
+          a.sort_code asc
     </select>
 
     <!--修改轮播图状态-->
